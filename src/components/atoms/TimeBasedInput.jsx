@@ -7,7 +7,6 @@ export const TimeBasedInput = ({ name, date, refetch }) => {
 
   const fetch = useCallback(() => {
     getTimeBasedValue(name, date).then((response) => {
-      console.log({ name, date, response });
       if (!response.results.length) return;
 
       const time = response.results.at(-1).time;

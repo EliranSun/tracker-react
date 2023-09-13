@@ -3,7 +3,6 @@ import Row from "../models/row";
 import { supabase } from "../utils/supabase";
 import { getIsoDate } from "../utils/date";
 
-
 export const useFormData = (date) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,29 +18,10 @@ export const useFormData = (date) => {
           setError(error || new Error("No data found"));
           return;
         }
-        
+
         const rowData = data.map((row) => new Row(row));
-        const today = {
-          productivity: rowData.findLast((row) => row.productivity)?.productivity,
-          creative: rowData.findLast((row) => row.creative)?.creative,
-          social: rowData.findLast((row) => row.social)?.social,
-          wentToBed: rowData.findLast((row) => row.wentToBed)?.wentToBed,
-          wokeUp: rowData.findLast((row) => row.wokeUp)?.wokeUp,
-          snooze: rowData.find((row) => row.snooze)?.snooze,
-          wokeUpMidNight: rowData.find((row) => row.wokeUpMidNight)?.wokeUpMidNight,
-          workLate: rowData.find((row) => row.workLate)?.workLate,
-          stuffed: rowData.find((row) => row.stuffed)?.stuffed,
-          workout: rowData.find((row) => row.workout)?.workout,
-          youtube: rowData.find((row) => row.youtube)?.youtube,
-          outside: rowData.find((row) => row.outside)?.outside,
-          nap: rowData.find((row) => row.nap)?.nap,
-          family: rowData.find((row) => row.family)?.family,
-          porn: rowData.find((row) => row.porn)?.porn,
-          sick: rowData.find((row) => row.sick)?.sick,
-          alcohol: rowData.find((row) => row.alcohol)?.alcohol,
-          keto: rowData.find((row) => row.keto)?.keto,
-        };
-        
+        const today = rowData.find((row) => row.date === date);
+
         setRows(rowData);
         setDateData({
           ...dateData,
@@ -55,12 +35,12 @@ export const useFormData = (date) => {
         setIsLoading(false);
       });
   };
-  
+
   useEffect(() => {
     setIsLoading(true);
     fetch();
   }, [date]);
-  
+
   return {
     error,
     isLoading,
@@ -68,6 +48,6 @@ export const useFormData = (date) => {
     dateData,
     date,
     todayData: dateData[date] || {},
-    refetch: fetch
+    refetch: fetch,
   };
 };

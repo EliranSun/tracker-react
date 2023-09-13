@@ -56,7 +56,7 @@ export const TrackerForm = () => {
           <TimeInput name="went_to_bed" />
           <TimeInput name="woke_up" />
           <CheckboxInput name="snooze" />
-          <CheckboxInput name="woke_mid_night" />
+          <CheckboxInput name="woke_up_mid_night" />
           <NumberInput name="nap" />
         </Fieldset>
         <Fieldset legend="Consumption">
