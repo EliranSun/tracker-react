@@ -21,8 +21,6 @@ export const EnergyInput = ({ date, onSuccess = noop }) => {
     fetch();
   }, []);
   
-  console.log({ energy, initEnergy });
-  
   return (
     <div style={{ display: 'flex', justifyContent: 'stretch' }}>
       <Input

@@ -22,8 +22,6 @@ export const useFormData = (date) => {
         
         const rowData = data.map((row) => new Row(row));
         const today = {
-          energy: rowData.findLast((row) => row.energy)?.energy,
-          coffee: rowData.findLast((row) => row.coffee)?.coffee,
           productivity: rowData.findLast((row) => row.productivity)?.productivity,
           creative: rowData.findLast((row) => row.creative)?.creative,
           social: rowData.findLast((row) => row.social)?.social,
@@ -36,13 +34,9 @@ export const useFormData = (date) => {
           workout: rowData.find((row) => row.workout)?.workout,
           youtube: rowData.find((row) => row.youtube)?.youtube,
           outside: rowData.find((row) => row.outside)?.outside,
-          sugar: rowData.findLast((row) => row.sugar)?.sugar,
           nap: rowData.find((row) => row.nap)?.nap,
           family: rowData.find((row) => row.family)?.family,
-          eat: rowData.findLast((row) => row.eating)?.eating,
-          water: rowData.findLast((row) => row.water)?.water,
           porn: rowData.find((row) => row.porn)?.porn,
-          shower: rowData.findLast((row) => row.shower)?.shower,
           sick: rowData.find((row) => row.sick)?.sick,
           alcohol: rowData.find((row) => row.alcohol)?.alcohol,
           keto: rowData.find((row) => row.keto)?.keto,

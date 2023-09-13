@@ -1,12 +1,32 @@
 import { supabase } from "./supabase";
 
-export const updateData = async (data, date) => {
-  console.log({ data, date });
+export const updateData = async (name, data, date) => {
   try {
-    const { data: results, error } = await supabase
-      .from("tracker")
-      .upsert({ date, ...data })
-      .eq("date", date);
+    // const { data: initData } = await supabase
+    //   .from("tracker")
+    //   .select("*")
+    //   .eq("date", date);
+    const initData = [1];
+    let results, error;
+    console.log({ initData, name, data, date });
+    if (initData.length > 0) {
+      const response = await supabase
+        .from("tracker")
+        .update({ [name]: data })
+        .eq("date", date);
+      
+      results = response.data;
+      error = response.error;
+    } else {
+      const response = await supabase
+        .from("tracker")
+        .insert({ date, [name]: data });
+      
+      results = response.data;
+      error = response.error;
+    }
+    
+    console.log({ results, error });
     
     if (error) {
       console.error(error);
@@ -14,7 +34,6 @@ export const updateData = async (data, date) => {
       return;
     }
     
-    console.info("Success!", results);
     return { success: true, results };
   } catch (error) {
     console.error(error);
@@ -34,7 +53,6 @@ export const updateEnergy = async (energy, date, time) => {
       return;
     }
     
-    console.info("Success!", results);
     return { success: true, results };
   } catch (error) {
     console.error(error);
@@ -44,7 +62,6 @@ export const updateEnergy = async (energy, date, time) => {
 
 export const getEnergy = async (date) => {
   try {
-    console.log({ date });
     const { data: results, error } = await supabase
       .from("energy")
       .select("*")
@@ -56,7 +73,6 @@ export const getEnergy = async (date) => {
       return;
     }
     
-    console.info("Success!", results);
     return { success: true, results };
   } catch (error) {
     console.error(error);
@@ -66,7 +82,6 @@ export const getEnergy = async (date) => {
 
 export const getTimeBasedValue = async (name, date) => {
   try {
-    console.log({ date });
     const { data: results, error } = await supabase
       .from(name)
       .select("*")
@@ -78,7 +93,6 @@ export const getTimeBasedValue = async (name, date) => {
       return;
     }
     
-    console.info("Success!", results);
     return { success: true, results };
   } catch (error) {
     console.error(error);
@@ -98,7 +112,6 @@ export const updateTimeBasedValue = async (name, date, time) => {
       return;
     }
     
-    console.info("Success!", results);
     return { success: true, results };
   } catch (error) {
     console.error(error);

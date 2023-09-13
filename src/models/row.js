@@ -2,14 +2,9 @@ class Row {
   constructor({
     creative,
     date,
-    energy,
     family,
-    coffee,
-    eating,
-    water,
     porn,
     productivity,
-    shower,
     sick,
     snooze,
     social,
@@ -23,17 +18,9 @@ class Row {
     workout,
     youtube,
     outside,
-    sugar,
     nap,
   }) {
     this.date = date;
-    
-    this.energy = energy || [];
-    this.coffee = coffee || [];
-    this.sugar = sugar || [];
-    this.eating = eating || [];
-    this.water = water || [];
-    this.shower = shower || [];
     
     this.productivity = productivity || 0;
     this.creative = creative || 0;

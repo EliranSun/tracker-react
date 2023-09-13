@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { snakeCase, noop } from "lodash";
+import { SubmitButton } from "./SubmitButton";
 
-export const Input = ({ name, type, value = "", checked, onChange = noop, ...rest }) => {
+export const Input = ({ name, type, date, value = "", refetch = noop }) => {
   const [innerValue, setInnerValue] = useState(value);
   const snakedName = snakeCase(name);
-  
-  useEffect(() => {
-    setInnerValue(value);
-  }, [value]);
   
   return (
     <div className="field">
@@ -17,18 +14,25 @@ export const Input = ({ name, type, value = "", checked, onChange = noop, ...res
         id={snakedName}
         name={snakedName}
         value={innerValue}
-        defaultChecked={checked}
+        defaultChecked={value}
         onChange={(e) => {
           if (type === "checkbox") {
-            onChange({ [snakedName]: e.target.checked });
+            setInnerValue(e.target.checked);
             return;
           }
-          
           setInnerValue(e.target.value);
-          onChange(e.target.value);
         }}
-        {...rest}
       />
+      {innerValue !== value &&
+        <SubmitButton
+          date={date}
+          name={name}
+          data={type === 'checkbox' ? String(innerValue) : innerValue}
+          onSuccess={() => {
+            setTimeout(() => {
+              refetch();
+            }, 4000);
+          }}/>}
     </div>
   );
 };

@@ -20,7 +20,6 @@ export const useLogin = () => {
   useEffect(() => {
     supabase.auth.getUser().then((response) => {
       if (response.data.user) {
-        console.log({ user: response.data.user });
         setIsLoggedIn(true);
       }
     });

@@ -4,7 +4,6 @@ import { useFormData } from "../../hooks/useFormData";
 import { useState } from "react";
 import { getIsoDate } from "../../utils/date";
 import { SubmitButton } from "../atoms/SubmitButton";
-import { updateEnergy } from "../../utils/updateData";
 import { EnergyInput } from "../atoms/EnergyInput";
 import { TimeBasedInput } from "../atoms/TimeBasedInput";
 
@@ -12,13 +11,13 @@ export const TrackerForm = () => {
   const [date, setDate] = useState(getIsoDate());
   const { todayData, refetch } = useFormData(date);
   const [dataToInsert, setDataToInsert] = useState(todayData);
-  
   const TimeInput = ({ name }) => {
     return (
       <Input
         type="time"
         name={name}
-        onChange={value => update(name, value)}
+        date={date}
+        refetch={refetch}
         value={todayData[name]}/>
     )
   };
@@ -28,8 +27,9 @@ export const TrackerForm = () => {
       <Input
         type="checkbox"
         name={name}
-        onChange={value => update(name, value)}
-        checked={todayData[name]}/>
+        date={date}
+        refetch={refetch}
+        value={Boolean(todayData[name])}/>
     )
   };
   
@@ -38,25 +38,11 @@ export const TrackerForm = () => {
       <Input
         type="number"
         name={name}
-        onChange={value => update(name, value)}
+        date={date}
+        refetch={refetch}
         value={todayData[name]}/>
     )
   };
-  
-  const update = (name, value) => {
-    // TODO: case string to number
-    if (todayData[name] == value) { // eslint-disable-line eqeqeq
-      const { [name]: _, ...rest } = dataToInsert;
-      setDataToInsert(rest);
-      return;
-    }
-    
-    setDataToInsert({
-      ...dataToInsert,
-      ...value
-    });
-  };
-  
   
   return (
     <div>
@@ -99,15 +85,6 @@ export const TrackerForm = () => {
           <CheckboxInput name="porn"/>
         </Fieldset>
       </div>
-      <SubmitButton
-        date={date}
-        data={dataToInsert}
-        onSuccess={() => {
-          setTimeout(() => {
-            setDataToInsert({});
-            refetch();
-          }, 4000);
-        }}/>
     </div>
   );
 };
