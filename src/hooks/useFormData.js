@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Row from "../models/row";
 import { supabase } from "../utils/supabase";
 import { getIsoDate } from "../utils/date";
 
-export const useData = (date) => {
+
+export const useFormData = (date) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [dateData, setDateData] = useState({});
-
-  useEffect(() => {
-    setIsLoading(true);
+  const fetch = async () => {
     supabase
       .from("tracker")
       .select("*")
@@ -20,11 +19,11 @@ export const useData = (date) => {
           setError(error || new Error("No data found"));
           return;
         }
-
+        
         const rowData = data.map((row) => new Row(row));
         const today = {
           energy: rowData.findLast((row) => row.energy)?.energy,
-          coffee: rowData.findLast((row) => row.lastCoffee)?.lastCoffee,
+          coffee: rowData.findLast((row) => row.coffee)?.coffee,
           productivity: rowData.findLast((row) => row.productivity)?.productivity,
           creative: rowData.findLast((row) => row.creative)?.creative,
           social: rowData.findLast((row) => row.social)?.social,
@@ -40,15 +39,15 @@ export const useData = (date) => {
           sugar: rowData.findLast((row) => row.sugar)?.sugar,
           nap: rowData.find((row) => row.nap)?.nap,
           family: rowData.find((row) => row.family)?.family,
-          eat: rowData.findLast((row) => row.lastEat)?.lastEat,
-          water: rowData.findLast((row) => row.lastWater)?.lastWater,
+          eat: rowData.findLast((row) => row.eating)?.eating,
+          water: rowData.findLast((row) => row.water)?.water,
           porn: rowData.find((row) => row.porn)?.porn,
           shower: rowData.findLast((row) => row.shower)?.shower,
           sick: rowData.find((row) => row.sick)?.sick,
           alcohol: rowData.find((row) => row.alcohol)?.alcohol,
           keto: rowData.find((row) => row.keto)?.keto,
         };
-
+        
         setRows(rowData);
         setDateData({
           ...dateData,
@@ -61,8 +60,13 @@ export const useData = (date) => {
       .finally(() => {
         setIsLoading(false);
       });
+  };
+  
+  useEffect(() => {
+    setIsLoading(true);
+    fetch();
   }, [date]);
-
+  
   return {
     error,
     isLoading,
@@ -70,5 +74,6 @@ export const useData = (date) => {
     dateData,
     date,
     todayData: dateData[date] || {},
+    refetch: fetch
   };
 };

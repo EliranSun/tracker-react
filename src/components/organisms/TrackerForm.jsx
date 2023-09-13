@@ -1,18 +1,31 @@
-import { Fieldset } from "./components/molecules/Fieldset";
-import { Input } from "./components/atoms/Input";
-import { useData } from "./hooks/useData";
+import { Fieldset } from "../molecules/Fieldset";
+import { Input } from "../atoms/Input";
+import { useFormData } from "../../hooks/useFormData";
 import { useState } from "react";
-import { getIsoDate } from "./utils/date";
-import { SubmitButton } from "./components/atoms/SubmitButton";
+import { getIsoDate } from "../../utils/date";
+import { SubmitButton } from "../atoms/SubmitButton";
+import { updateEnergy } from "../../utils/updateData";
+import { EnergyInput } from "../atoms/EnergyInput";
+
+const arrayFields = [
+  'energy',
+  'coffee',
+  'sugar',
+  'eating',
+  'water',
+  'shower',
+];
 
 export const TrackerForm = () => {
   const [date, setDate] = useState(getIsoDate());
-  const { todayData } = useData(date);
+  const { todayData, refetch } = useFormData(date);
   const [dataToInsert, setDataToInsert] = useState(todayData);
   
   const update = (value) => {
     const key = Object.keys(value)[0];
-    if (todayData[key] === value[key]) {
+    
+    // TODO: case string to number
+    if (todayData[key] == value[key]) { // eslint-disable-line eqeqeq
       const { [key]: _, ...rest } = dataToInsert;
       setDataToInsert(rest);
       return;
@@ -26,10 +39,14 @@ export const TrackerForm = () => {
   
   return (
     <div>
-      <Input type="date" name="Date" value={date} onChange={({ date: newDate }) => {
-        setDate(newDate);
-      }}/>
-      <Input type="range" name="Energy"/>
+      <Input
+        type="date"
+        name="Date"
+        value={date}
+        onChange={({ date: newDate }) => {
+          setDate(newDate);
+        }}/>
+      <EnergyInput date={date} onSuccess={refetch}/>
       <div className="">
         <Fieldset legend="Sleep">
           <Input
@@ -65,22 +82,22 @@ export const TrackerForm = () => {
             type="time"
             name="Eat"
             onChange={update}
-            value={todayData.eat}/>
+            value={todayData.eating?.at(-1)}/>
           <Input
             type="time"
             name="Coffee"
             onChange={update}
-            value={todayData.coffee}/>
+            value={todayData.coffee?.at(-1)}/>
           <Input
             type="time"
             name="Water"
             onChange={update}
-            value={todayData.water}/>
+            value={todayData.water?.at(-1)}/>
           <Input
             type="time"
             name="Sugar"
             onChange={update}
-            value={todayData.sugar}/>
+            value={todayData.sugar?.at(-1)}/>
           <Input
             type="checkbox"
             name="Alcohol"
@@ -137,10 +154,10 @@ export const TrackerForm = () => {
         </Fieldset>
         <Fieldset legend="Well Being">
           <Input
-            type="checkbox"
+            type="time"
             name="Shower"
             onChange={update}
-            checked={todayData.shower}/>
+            value={todayData.shower?.at(-1)}/>
           <Input
             type="checkbox"
             name="Work late"
@@ -166,12 +183,13 @@ export const TrackerForm = () => {
       </div>
       <SubmitButton
         date={date}
+        data={dataToInsert}
         onSuccess={() => {
           setTimeout(() => {
             setDataToInsert({});
+            refetch();
           }, 4000);
-        }}
-        data={dataToInsert}/>
+        }}/>
     </div>
   );
 };

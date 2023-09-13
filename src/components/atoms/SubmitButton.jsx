@@ -1,4 +1,4 @@
-import { insertRowData } from "../../utils/insertRowData";
+import { updateData } from "../../utils/updateData";
 import { useState } from "react";
 import { noop } from "lodash";
 
@@ -7,6 +7,7 @@ export const SubmitButton = ({ data, date, onSuccess = noop, onError = noop }) =
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const changesCount = Object.keys(data).length;
+  
   if (changesCount === 0) {
     return null;
   }
@@ -16,7 +17,7 @@ export const SubmitButton = ({ data, date, onSuccess = noop, onError = noop }) =
       disabled={isLoading}
       onClick={async () => {
         setIsLoading(true);
-        const { success } = await insertRowData(data, date);
+        const { success } = await updateData(data, date);
         setIsLoading(false);
         if (success) {
           setSuccess(true);

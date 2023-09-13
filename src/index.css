@@ -1,79 +1,79 @@
 @import url("https://fonts.googleapis.com/css2?family=Alef&display=swap");
 
 body {
-  margin: 0;
-  font-family: "Alef", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    margin: 0;
+    font-family: "Alef", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #282c34;
-  color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #282c34;
+    color: #fff;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
 section {
-  display: flex;
+    display: flex;
 }
 
 form {
-  width: 33vw;
+    width: 33vw;
 }
 
 canvas {
-  width: 66vw;
+    width: 66vw;
 }
 
 .field {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 input {
-  height: 1.5rem;
-  margin: 0.25rem;
+    height: 1.5rem;
+    margin: 0.25rem;
 }
 
 input[type="checkbox"] {
-  width: 1.5rem;
-  height: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 input[type="range"] {
-  width: 100%;
+    width: 100%;
 }
 
 button#submitButton {
-  font-size: 1rem;
-  margin: auto;
-  display: inline-block;
-  width: 100%;
-  padding: 0.5rem;
-  height: 3.5rem;
-  margin-block: 2rem;
+    font-size: 1rem;
+    margin: auto;
+    display: inline-block;
+    width: 100%;
+    padding: 0.5rem;
+    height: 3.5rem;
+    margin-block: 2rem;
 }
 
-@media screen and (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
+@media screen and (max-width: 1000px) {
+    section {
+        flex-direction: column;
+    }
 
-  form {
-    width: 100%;
-  }
+    form {
+        width: 100%;
+    }
 
-  canvas {
-    width: 100%;
-  }
+    canvas {
+        width: 100%;
+    }
 }
 
 .flex {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
