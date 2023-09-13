@@ -24,8 +24,8 @@ export const useLogin = () => {
         setIsLoggedIn(true);
       }
     });
-    
   }, []);
+  
   return {
     isLoggedIn,
     login

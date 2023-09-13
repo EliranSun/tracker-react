@@ -25,7 +25,7 @@ export const Input = ({ name, type, value = "", checked, onChange = noop, ...res
           }
           
           setInnerValue(e.target.value);
-          onChange({ [snakedName]: e.target.value });
+          onChange(e.target.value);
         }}
         {...rest}
       />

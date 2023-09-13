@@ -1,17 +1,27 @@
 import { updateEnergy, getEnergy } from "../../utils/updateData";
 import { Input } from "./Input";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { noop } from "lodash";
 
-export const EnergyInput = ({ energy, date, onSuccess = noop }) => {
+export const EnergyInput = ({ date, onSuccess = noop }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [newEnergy, setEnergy] = useState(energy);
+  const [energy, setEnergy] = useState(0);
+  const [initEnergy, setInitEnergy] = useState(0);
+  const fetch = useCallback(async () => {
+    const response = await getEnergy(date);
+    
+    if (!response.results.length)
+      return;
+    
+    setEnergy(response.results.at(-1).level);
+    setInitEnergy(response.results.at(-1).level);
+  }, [date]);
   
   useEffect(() => {
-    getEnergy(date).then((response) => {
-      console.log({ response });
-    });
-  }, [energy]);
+    fetch();
+  }, []);
+  
+  console.log({ energy, initEnergy });
   
   return (
     <div style={{ display: 'flex', justifyContent: 'stretch' }}>
@@ -20,11 +30,9 @@ export const EnergyInput = ({ energy, date, onSuccess = noop }) => {
         name="Energy"
         min={1}
         max={10}
-        value={newEnergy}
-        onChange={({ energy }) => {
-          setEnergy(energy);
-        }}/>
-      {newEnergy && energy !== newEnergy &&
+        value={energy}
+        onChange={value => setEnergy(Number(value))}/>
+      {energy !== initEnergy &&
         <button onClick={async () => {
           const time = new Date().toLocaleTimeString('he-IL', {
             hour: '2-digit',
@@ -32,8 +40,9 @@ export const EnergyInput = ({ energy, date, onSuccess = noop }) => {
           });
           
           setIsLoading(true);
-          await updateEnergy(newEnergy, date, time);
+          await updateEnergy(energy, date, time);
           setIsLoading(false);
+          fetch();
         }}>
           {isLoading ? 'Updating...' : 'Update Energy'}
         </button>}

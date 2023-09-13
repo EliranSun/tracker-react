@@ -47,7 +47,50 @@ export const getEnergy = async (date) => {
     console.log({ date });
     const { data: results, error } = await supabase
       .from("energy")
-      .select("*");
+      .select("*")
+      .eq("date", date);
+    
+    if (error) {
+      console.error(error);
+      alert("Error!");
+      return;
+    }
+    
+    console.info("Success!", results);
+    return { success: true, results };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error };
+  }
+};
+
+export const getTimeBasedValue = async (name, date) => {
+  try {
+    console.log({ date });
+    const { data: results, error } = await supabase
+      .from(name)
+      .select("*")
+      .eq("date", date);
+    
+    if (error) {
+      console.error(error);
+      alert("Error!");
+      return;
+    }
+    
+    console.info("Success!", results);
+    return { success: true, results };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error };
+  }
+}
+
+export const updateTimeBasedValue = async (name, date, time) => {
+  try {
+    const { data: results, error } = await supabase
+      .from(name)
+      .insert({ date, time });
     
     if (error) {
       console.error(error);
