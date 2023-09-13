@@ -1,21 +1,21 @@
 import { supabase } from "./supabase";
 
-export const insertRowData = async (data) => {
+export const insertRowData = async (data, date) => {
   try {
     const { data: results, error } = await supabase
       .from("tracker")
-      .insert([data]);
-
+      .insert([{ date, ...data }]);
+    
     if (error) {
       console.error(error);
       alert("Error!");
       return;
     }
-
+    
     console.info("Success!", results);
-    alert("Success!");
+    return { success: true, results };
   } catch (error) {
     console.error(error);
-    alert("Error!");
+    return { success: false, error };
   }
 };

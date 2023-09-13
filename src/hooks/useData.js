@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import Row from "../models/row";
 import { supabase } from "../utils/supabase";
+import { getIsoDate } from "../utils/date";
 
-export const useData = () => {
+export const useData = (date) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [dateData, setDateData] = useState({});
-  const date = new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
     setIsLoading(true);
@@ -25,13 +25,13 @@ export const useData = () => {
         const today = {
           energy: rowData.findLast((row) => row.energy)?.energy,
           coffee: rowData.findLast((row) => row.lastCoffee)?.lastCoffee,
-          productivity: rowData.findLast((row) => row.productivity),
+          productivity: rowData.findLast((row) => row.productivity)?.productivity,
           creative: rowData.findLast((row) => row.creative)?.creative,
           social: rowData.findLast((row) => row.social)?.social,
           wentToBed: rowData.findLast((row) => row.wentToBed)?.wentToBed,
           wokeUp: rowData.findLast((row) => row.wokeUp)?.wokeUp,
           snooze: rowData.find((row) => row.snooze)?.snooze,
-          wokeUpMidNight: rowData.find((row) => row.wokeUpMidNight),
+          wokeUpMidNight: rowData.find((row) => row.wokeUpMidNight)?.wokeUpMidNight,
           workLate: rowData.find((row) => row.workLate)?.workLate,
           stuffed: rowData.find((row) => row.stuffed)?.stuffed,
           workout: rowData.find((row) => row.workout)?.workout,
