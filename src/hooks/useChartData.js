@@ -19,12 +19,14 @@ const extractTimeBasedData = (data = [], date) => {
   }).filter(Boolean);
 };
 
-const extractValueBasedData = (data = [], date) => {
+const extractValueBasedData = (data = [], date, isDayView) => {
   return data.map(item => {
     const key = Object.keys(item)[0];
     const value = Object.values(item)[0];
+    const hour = Number(key?.split(":")[0]);
+    
     if (value && key) {
-      return ({ y: value, x: date });
+      return ({ y: value, x: isDayView ? `${hour}:00` : date });
     }
     
     return null;
@@ -84,15 +86,16 @@ export const useChartData = ({ date }) => {
           .sort((a, b) => a.timestamp - b.timestamp)
           .forEach((row) => {
             const rowDate = row.date;
-            const x = date ? '17:00' : row.date;
-            foo.creative.push({ y: row.creative, x: '12:00' });
+            const x = date ? '12:00' : row.date;
+            
+            foo.creative.push({ y: row.creative, x });
             foo.social.push({ y: row.social, x });
             foo.youtube.push({ y: row.youtube, x });
             foo.productivity.push({ y: row.productivity, x });
             
             foo.sleep.push(...extractSleepHoursData(row));
             foo.coffee.push(...extractTimeBasedData(row.coffee, x));
-            foo.energy.push(...extractValueBasedData(row.energy, x));
+            foo.energy.push(...extractValueBasedData(row.energy, x, Boolean(date)));
             
             const napOverTime = DateTime
               .fromObject({ hour: 15, minute: 0 })
@@ -111,11 +114,11 @@ export const useChartData = ({ date }) => {
             const HOUR_IN_MS = 1000 * 60 * 60;
             
             if (date) {
-              const day = new Date(today - i * HOUR_IN_MS);
-              return getLocaleTime(day);
+              const day = new Date(today - i * HOUR_IN_MS).setMinutes(0);
+              return getLocaleTime(new Date(day));
             }
             
-            const day = new Date(today - i * DAY_IN_MS).setMinutes(0);
+            const day = new Date(today - i * DAY_IN_MS);
             return getLocaleDate(day);
           }).reverse(),
         });

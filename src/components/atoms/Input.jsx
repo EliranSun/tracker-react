@@ -12,6 +12,7 @@ export const Input = ({
   min,
   max,
   refetch = noop,
+  submitSameValues = false
 }) => {
   const inputValue = useMemo(() => {
     if (value) return value;
@@ -63,7 +64,7 @@ export const Input = ({
         }}
       />
       {type === 'range' && innerValue}
-      {innerValue != inputValue && (
+      {(submitSameValues || innerValue != inputValue) && (
         <SubmitButton
           date={date}
           name={name}

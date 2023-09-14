@@ -13,7 +13,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { useChartData } from "../../hooks/useChartData";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { getLocaleDate } from "../../utils/date";
 
 ChartJS.register(
   LineElement,
@@ -63,8 +64,8 @@ const getData = ({ labels, data }) => {
     data: data.productivity,
     borderWidth: 3,
     yAxisID: "y2",
-    borderColor: "rgb(53, 162, 235)",
-    backgroundColor: "rgba(53, 162, 235, 0.5)",
+    borderColor: "rgb(235,53,53)",
+    backgroundColor: "rgba(122,40,40,0.5)",
   };
   const creativeData = {
     type: "bar",
@@ -73,8 +74,8 @@ const getData = ({ labels, data }) => {
     data: data.creative,
     borderWidth: 3,
     yAxisID: "y2",
-    borderColor: "rgb(53, 162, 235)",
-    backgroundColor: "rgba(53, 162, 235, 0.5)",
+    borderColor: "rgb(196,53,235)",
+    backgroundColor: "rgba(183,53,235,0.5)",
   };
   const socialData = {
     type: "bar",
@@ -208,8 +209,11 @@ const options = {
   },
 };
 
-export const TrackingChart = () => {
-  const { labels, data } = useChartData({ date: '2023-09-14' });
+export const TrackingChart = ({ date }) => {
+  const [isDayView, setIsDayView] = useState(false);
+  const { labels, data } = useChartData({
+    date: isDayView && getLocaleDate(date ? new Date(date) : undefined)
+  });
   const formattedData = useMemo(() => {
     return getData({
       labels,
@@ -219,6 +223,8 @@ export const TrackingChart = () => {
   
   return (
     <div>
+      <button onClick={() => setIsDayView(true)}>DAY</button>
+      <button onClick={() => setIsDayView(false)}>WEEK</button>
       <Line options={options} data={formattedData}/>
     </div>
   );

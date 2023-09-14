@@ -7,8 +7,7 @@ import { getIsoDate } from "../../utils/date";
 import { EnergyInput } from "../atoms/EnergyInput";
 import { TimeBasedInput } from "../atoms/TimeBasedInput";
 
-export const TrackerForm = () => {
-  const [date, setDate] = useState(getIsoDate());
+export const TrackerForm = ({ date }) => {
   const { todayData, refetch } = useFormData(date);
   const TimeInput = ({ name }) => {
     return (
@@ -48,11 +47,6 @@ export const TrackerForm = () => {
   
   return (
     <div>
-      <input
-        type="date"
-        name="Date"
-        value={date}
-        onChange={event => setDate(event.target.value)}/>
       <EnergyInput
         date={date}
         refetch={refetch}
