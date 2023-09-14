@@ -8,7 +8,8 @@ import {
   PointElement,
   BarElement,
   RadialLinearScale,
-  ScatterController
+  ScatterController,
+  BarController,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { useChartData } from "../../hooks/useChartData";
@@ -23,7 +24,8 @@ ChartJS.register(
   LinearScale,
   CategoryScale,
   RadialLinearScale,
-  ScatterController
+  ScatterController,
+  BarController
 );
 
 const getData = ({ labels, data }) => {
