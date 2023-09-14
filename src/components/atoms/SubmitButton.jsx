@@ -28,7 +28,6 @@ export const SubmitButton = ({
         setIsLoading(true);
         try {
           const value = { [loweredName]: data };
-          // console.log({ date, value });
           await updateTrackingData(date, value);
           setIsLoading(false);
           setSuccess(true);

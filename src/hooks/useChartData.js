@@ -3,6 +3,7 @@ import Row from "../models/row";
 import { nearestFifteen } from "../utils/time";
 import { getTrackingData } from "../utils/firebase";
 import { getLocaleDate } from "../utils/date";
+import { DateTime } from 'luxon';
 
 const extractTimeBasedData = (data = [], date) => {
   return data.map(item => {
@@ -40,8 +41,14 @@ const extractSleepHoursData = (data = []) => {
   const previousDaySleep = [];
   
   if (data.wentToBed && data.wokeUp) {
+    if (Number(wentToBedHour) >= 0 && Number(wentToBedHour) <= 12) {
+      thisDaySleep.push(`${wentToBedHour}:${wentToBedMinute}`, `${wokeUpHour}:${wokeUpMinute}`);
+      return [{ x: data.date, y: thisDaySleep }];
+    }
+    
+    previousDaySleep.push(`${wentToBedHour}:${wentToBedMinute}`, "23:59");
     thisDaySleep.push("0:00", `${wokeUpHour}:${wokeUpMinute}`);
-    previousDaySleep.push(`${wentToBedHour}:${wentToBedMinute}`, "24:00");
+    
     const date = new Date(new Date(data.date).getTime() - 24 * 60 * 60 * 1000);
     const previousDay = getLocaleDate(date);
     
@@ -64,48 +71,43 @@ export const useChartData = ({ date, type }) => {
     getTrackingData(date)
       .then(data => {
         if (!data) {
-          console.log({ data });
           setError(new Error("No data found"));
           return;
         }
         
-        const lastCoffee = [];
-        const productivityData = [];
-        const creativityData = [];
-        const socialData = [];
-        const totalSleepData = [];
-        const wakingUpMidNight = [];
-        const energyData = [];
+        const foo = {};
+        Object.keys(new Row()).forEach(key => {foo[key] = []});
+        foo.sleep = [];
         
         data
           .map((item) => ({ ...item, timestamp: new Date(item.date) }))
           .sort((a, b) => a.timestamp - b.timestamp)
           .forEach((row) => {
             const date = row.date;
-            creativityData.push({ y: row.creative, x: row.date });
-            productivityData.push({ y: row.productivity, x: row.date });
-            socialData.push({ y: row.social, x: row.date });
-            row.wokeUpMidNight && wakingUpMidNight.push({ y: 5, x: row.date });
-            totalSleepData.push(...extractSleepHoursData(row));
-            lastCoffee.push(...extractTimeBasedData(row.coffee, date));
-            energyData.push(...extractValueBasedData(row.energy, date));
+            foo.creative.push({ y: row.creative, x: row.date });
+            foo.productivity.push({ y: row.productivity, x: row.date });
+            foo.social.push({ y: row.social, x: row.date });
+            
+            foo.sleep.push(...extractSleepHoursData(row));
+            foo.coffee.push(...extractTimeBasedData(row.coffee, date));
+            foo.energy.push(...extractValueBasedData(row.energy, date));
+            
+            const napOverTime = DateTime
+              .fromObject({ hour: 15, minute: 0 })
+              .plus({ minutes: row.nap })
+              .toFormat('HH:mm');
+            row.wokeUpMidNight && foo.wokeUpMidNight.push({ y: '4:00', x: row.date });
+            row.snooze && foo.snooze.push({ y: '7:00', x: row.date });
+            row.nap && foo.nap.push({ y: ['15:00', napOverTime], x: row.date });
           });
         
         setData({
+          data: foo,
           labels: Array.from({ length: 7 }).map((_, i) => {
             const today = new Date().getTime();
             const day = new Date(today - i * 24 * 60 * 60 * 1000);
             return getLocaleDate(day);
           }).reverse(),
-          data: {
-            energy: energyData,
-            coffee: lastCoffee,
-            productivity: productivityData,
-            creative: creativityData,
-            social: socialData,
-            sleep: totalSleepData,
-            wokeUpMidNight: wakingUpMidNight,
-          },
         });
       })
       .catch((error) => {

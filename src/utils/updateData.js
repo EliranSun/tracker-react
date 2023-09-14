@@ -21,8 +21,6 @@ export const updateData = async (name, data, date) => {
       error = response.error;
     }
     
-    console.log({ results, error });
-    
     if (error) {
       console.error(error);
       return { success: false, error };

@@ -10,7 +10,6 @@ import { TimeBasedInput } from "../atoms/TimeBasedInput";
 export const TrackerForm = () => {
   const [date, setDate] = useState(getIsoDate());
   const { todayData, refetch } = useFormData(date);
-  console.log({ todayData });
   const TimeInput = ({ name }) => {
     return (
       <Input

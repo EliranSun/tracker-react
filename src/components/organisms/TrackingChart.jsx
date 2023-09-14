@@ -86,10 +86,10 @@ const getData = ({ labels, data }) => {
   const datasets = [];
   
   data.energy && datasets.push(energyData);
-  data.coffee && datasets.push(coffeeData);
-  data.productivity && datasets.push(productivityData);
-  data.creative && datasets.push(creativeData);
-  data.social && datasets.push(socialData);
+  // data.coffee && datasets.push(coffeeData);
+  // data.productivity && datasets.push(productivityData);
+  // data.creative && datasets.push(creativeData);
+  // data.social && datasets.push(socialData);
   
   return {
     labels,
@@ -97,9 +97,18 @@ const getData = ({ labels, data }) => {
       ...datasets,
       {
         type: "scatter",
-        label: "Waking up mid night",
+        label: "Woke mid night",
         data: data.wokeUpMidNight,
-        borderColor: "tomato",
+        borderColor: "blue",
+        yAxisID: "y1",
+        stepped: true,
+      },
+      {
+        type: "scatter",
+        label: "Snooze",
+        yAxisID: "y1",
+        data: data.snooze,
+        borderColor: "yellow",
         stepped: true,
       },
       {
@@ -110,7 +119,16 @@ const getData = ({ labels, data }) => {
         yAxisID: "y1",
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
-      }
+      },
+      {
+        type: "bar",
+        label: "Nap",
+        data: data.nap,
+        borderWidth: 3,
+        yAxisID: "y1",
+        borderColor: "green",
+        backgroundColor: "green",
+      },
     ],
   };
 };

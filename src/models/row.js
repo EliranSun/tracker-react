@@ -27,7 +27,9 @@ class Row {
     nap,
   } = {}) {
     this.date = date;
+    this.energy = energy || [];
     
+    // activities
     this.productivity = productivity || 0;
     this.creative = creative || 0;
     this.social = social || 0;
@@ -36,18 +38,20 @@ class Row {
     this.nap = nap || 0;
     this.family = family || 0;
     
-    this.energy = energy || [];
+    // consumption
     this.water = water || [];
     this.eating = eating || [];
     this.shower = shower || [];
     this.sugar = sugar || [];
     this.coffee = coffee || [];
     
+    // sleep
     this.wentToBed = went_to_bed || "";
     this.wokeUp = woke_up || "";
-    
     this.snooze = snooze || false;
     this.wokeUpMidNight = woke_up_mid_night || false;
+    
+    // well-being
     this.workLate = work_late || false;
     this.stuffed = stuffed || false;
     this.workout = workout || false;
