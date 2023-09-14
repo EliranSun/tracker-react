@@ -19,6 +19,9 @@ function App() {
   
   return (
     <section className="App">
+      <button onClick={() => window.location.reload()}>
+        Refresh Page
+      </button>
       <TrackingChart/>
       <TrackerForm/>
     </section>
