@@ -1,23 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { snakeCase, noop } from "lodash";
 import { SubmitButton } from "./SubmitButton";
+import { getTime } from "../../utils/time";
 
 export const Input = ({
   name,
   type,
   date,
   value = "",
+  values,
   min,
   max,
   refetch = noop,
 }) => {
-  const [innerValue, setInnerValue] = useState(value);
+  const inputValue = useMemo(() => {
+    if (value) return value;
+    
+    if (values && values.length > 0) {
+      const lastValue = values.at(-1);
+      return Object.values(lastValue)[0];
+    }
+    
+    return "";
+  }, [values, value]);
+  const [innerValue, setInnerValue] = useState(inputValue);
   const snakedName = snakeCase(name);
-
+  
   useEffect(() => {
-    setInnerValue(value);
-  }, [value]);
-
+    setInnerValue(inputValue);
+  }, [inputValue]);
+  
+  const submitData = useMemo(() => {
+    if (values) {
+      const time = getTime();
+      return [...values, { [time]: innerValue }];
+    }
+    
+    if (type === "checkbox") {
+      return Boolean(innerValue);
+    }
+    
+    return innerValue;
+  }, [innerValue, type, values]);
+  
   return (
     <div className="field">
       <label htmlFor={snakedName}>{name.toUpperCase()}</label>
@@ -26,7 +51,7 @@ export const Input = ({
         id={snakedName}
         name={snakedName}
         value={innerValue}
-        defaultChecked={value}
+        defaultChecked={inputValue}
         min={min}
         max={max}
         onChange={(e) => {
@@ -37,11 +62,12 @@ export const Input = ({
           setInnerValue(e.target.value);
         }}
       />
-      {innerValue !== value && (
+      {type === 'range' && innerValue}
+      {innerValue != inputValue && (
         <SubmitButton
           date={date}
           name={name}
-          data={type === "checkbox" ? String(innerValue) : innerValue}
+          data={submitData}
           onSuccess={() => setTimeout(refetch, 2500)}
         />
       )}

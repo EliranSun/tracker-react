@@ -5,6 +5,7 @@ import {
 } from "../../utils/updateData";
 import { useState } from "react";
 import { noop } from "lodash";
+import { updateTrackingData } from "../../utils/firebase";
 
 const TimeBasedInput = ["eating", "water", "shower", "sugar", "coffee"];
 
@@ -19,33 +20,24 @@ export const SubmitButton = ({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const loweredName = name.toLowerCase();
-
+  
   return (
     <button
       disabled={isLoading}
       onClick={async () => {
-        let success;
         setIsLoading(true);
-        if (TimeBasedInput.includes(loweredName)) {
-          const results = await updateTimeBasedValue(loweredName, date);
-          success = results.success;
-        } else if (loweredName === "energy") {
-          const results = await updateEnergy(data, date);
-          success = results.success;
-        } else {
-          const results = await updateData(loweredName, data, date);
-          success = results.success;
-        }
-
-        setIsLoading(false);
-        if (success) {
+        try {
+          const value = { [loweredName]: data };
+          // console.log({ date, value });
+          await updateTrackingData(date, value);
+          setIsLoading(false);
           setSuccess(true);
           onSuccess();
-          return;
+        } catch (error) {
+          console.error(error);
+          setError("Something went wrong");
+          onError();
         }
-
-        setError("Something went wrong");
-        onError();
       }}>
       {success && "SUCCESS!"}
       {error && error}

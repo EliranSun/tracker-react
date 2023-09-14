@@ -2,21 +2,7 @@ import { getEnergy } from "../../utils/updateData";
 import { Input } from "./Input";
 import { useCallback, useEffect, useState } from "react";
 
-export const EnergyInput = ({ date, refetch }) => {
-  const [energy, setEnergy] = useState(0);
-  const fetch = useCallback(async () => {
-    const response = await getEnergy(date);
-    if (!response.results.length) {
-      return;
-    }
-
-    setEnergy(response.results.at(-1).level);
-  }, [date]);
-
-  useEffect(() => {
-    fetch();
-  }, []);
-
+export const EnergyInput = ({ values, date, refetch }) => {
   return (
     <div style={{ display: "flex", justifyContent: "stretch" }}>
       <Input
@@ -24,7 +10,7 @@ export const EnergyInput = ({ date, refetch }) => {
         name="energy"
         min={1}
         max={10}
-        value={energy}
+        values={values}
         refetch={refetch}
         date={date}
       />

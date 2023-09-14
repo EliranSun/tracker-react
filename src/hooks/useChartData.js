@@ -1,114 +1,104 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../utils/supabase";
 import Row from "../models/row";
 import { nearestFifteen } from "../utils/time";
+import { getTrackingData } from "../utils/firebase";
+import { getLocaleDate } from "../utils/date";
+
+const extractTimeBasedData = (data = [], date) => {
+  return data.map(item => {
+    const value = Object.values(item)[0];
+    const hour = value?.split(":")[0];
+    const minute = nearestFifteen(value?.split(":")[1]);
+    
+    if (hour && minute) {
+      return { y: hour ? `${hour}:${minute}` : null, x: date };
+    }
+    
+    return null;
+  }).filter(Boolean);
+};
+
+const extractValueBasedData = (data = [], date) => {
+  return data.map(item => {
+    const key = Object.keys(item)[0];
+    const value = Object.values(item)[0];
+    if (value && key) {
+      return ({ y: value, x: date });
+    }
+    
+    return null;
+  }).filter(Boolean);
+};
+
+const extractSleepHoursData = (data = []) => {
+  const wentToBedHour = Number(data.wentToBed?.split(":")[0]);
+  const wentToBedMinute = nearestFifteen(data.wentToBed?.split(":")[1]);
+  const wokeUpHour = Number(data.wokeUp?.split(":")[0]);
+  const wokeUpMinute = nearestFifteen(data.wokeUp?.split(":")[1]);
+  
+  const thisDaySleep = [];
+  const previousDaySleep = [];
+  
+  if (data.wentToBed && data.wokeUp) {
+    thisDaySleep.push("0:00", `${wokeUpHour}:${wokeUpMinute}`);
+    previousDaySleep.push(`${wentToBedHour}:${wentToBedMinute}`, "24:00");
+    const date = new Date(new Date(data.date).getTime() - 24 * 60 * 60 * 1000);
+    const previousDay = getLocaleDate(date);
+    
+    return [
+      { x: previousDay, y: previousDaySleep },
+      { x: data.date, y: thisDaySleep }
+    ];
+  }
+  
+  return [];
+};
 
 export const useChartData = ({ date, type }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
-
+  
   useEffect(() => {
     setIsLoading(true);
-    Promise.all([
-      supabase.from("tracker").select("*"),
-      supabase.from("energy").select("*"),
-    ])
-      .then(([trackerResponse, energyResponse]) => {
-        const { data: trackerData, error: trackerError } = trackerResponse;
-        const { data: energyData, error: energyError } = energyResponse;
-
-        if (trackerError || energyError || !trackerData || !energyData) {
-          console.log({ error, data });
-          setError(error || new Error("No data found"));
+    getTrackingData(date)
+      .then(data => {
+        if (!data) {
+          console.log({ data });
+          setError(new Error("No data found"));
           return;
         }
-
-        let labels = [];
+        
         const lastCoffee = [];
         const productivityData = [];
         const creativityData = [];
         const socialData = [];
-        let totalSleepData = {};
+        const totalSleepData = [];
         const wakingUpMidNight = [];
-
-        trackerData
-          .filter((item) => {
-            if (!date) {
-              return true;
-            }
-
-            return item.date === date;
-          })
+        const energyData = [];
+        
+        data
           .map((item) => ({ ...item, timestamp: new Date(item.date) }))
           .sort((a, b) => a.timestamp - b.timestamp)
-          .forEach((item) => {
-            const row = new Row(item);
-
-            labels.push(row.date);
-
-            creativityData.push(row.creative);
-            productivityData.push(row.productivity);
-            socialData.push(row.social);
+          .forEach((row) => {
+            const date = row.date;
+            creativityData.push({ y: row.creative, x: row.date });
+            productivityData.push({ y: row.productivity, x: row.date });
+            socialData.push({ y: row.social, x: row.date });
             row.wokeUpMidNight && wakingUpMidNight.push({ y: 5, x: row.date });
-
-            const wentToBedHour = Number(row.wentToBed?.split(":")[0]);
-            const wentToBedMinute = nearestFifteen(
-              row.wentToBed?.split(":")[1]
-            );
-            const wokeUpHour = Number(row.wokeUp?.split(":")[0]);
-            const wokeUpMinute = nearestFifteen(row.wokeUp?.split(":")[1]);
-
-            const wokeUpDate = new Date(2023, 1, 1, wokeUpHour, wokeUpMinute);
-            const wentToBedDate = new Date(
-              2023,
-              1,
-              1,
-              wentToBedHour,
-              wentToBedMinute
-            );
-            let foo;
-
-            if (row.wentToBed && row.wokeUp) {
-              if (wokeUpDate.getTime() < wentToBedDate.getTime()) {
-                foo = [
-                  "0:00",
-                  `${wokeUpHour}:${wokeUpMinute}`,
-                  `${wentToBedHour}:${wentToBedMinute}`,
-                  "23:45",
-                ];
-              } else {
-                foo = [
-                  `${wentToBedHour}:${wentToBedMinute}`,
-                  `${wokeUpHour}:${wokeUpMinute}`,
-                ];
-              }
-
-              totalSleepData = {
-                ...totalSleepData,
-                [row.date]: (totalSleepData[row.date] || []).concat(foo),
-              };
-            }
-
-            const hour = row.lastCoffee?.split(":")[0];
-            const minute = nearestFifteen(row.lastCoffee?.split(":")[1]);
-            lastCoffee.push(hour ? `${hour}:${minute}` : null);
+            totalSleepData.push(...extractSleepHoursData(row));
+            lastCoffee.push(...extractTimeBasedData(row.coffee, date));
+            energyData.push(...extractValueBasedData(row.energy, date));
           });
-
-        // labels = labels
-        //   .map((item) => new Date(item).getTime())
-        //   .sort()
-        //   .map((label) =>
-        //     new Date(label).toLocaleString("en-GB", {
-        //       day: "numeric",
-        //       month: "short",
-        //     })
-        //   );
-
+        
         setData({
-          labels: energyData.map((item) => item.date),
+          labels: Array.from({ length: 7 }).map((_, i) => {
+            const today = new Date().getTime();
+            const day = new Date(today - i * 24 * 60 * 60 * 1000);
+            return getLocaleDate(day);
+          }).reverse(),
           data: {
-            energy: energyData.map((item) => item.level),
+            energy: energyData,
             coffee: lastCoffee,
             productivity: productivityData,
             creative: creativityData,
@@ -125,7 +115,7 @@ export const useChartData = ({ date, type }) => {
         setIsLoading(false);
       });
   }, [date]);
-
+  
   return {
     error,
     isLoading,

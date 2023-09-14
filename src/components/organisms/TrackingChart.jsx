@@ -31,7 +31,7 @@ const getData = ({ labels, data }) => {
       datasets: [],
     };
   }
-
+  
   const energyData = {
     type: "line",
     label: "Energy levels",
@@ -82,27 +82,15 @@ const getData = ({ labels, data }) => {
     borderColor: "rgb(53, 162, 235)",
     backgroundColor: "rgba(53, 162, 235, 0.5)",
   };
-
-  const sleep = {
-    type: "bar",
-    label: "Sleep",
-    data: data.sleep,
-    borderWidth: 3,
-    yAxisID: "y1",
-    borderColor: "rgb(255, 99, 132)",
-    backgroundColor: "rgba(255, 99, 132, 0.5)",
-  };
-
+  
   const datasets = [];
-
+  
   data.energy && datasets.push(energyData);
   data.coffee && datasets.push(coffeeData);
   data.productivity && datasets.push(productivityData);
   data.creative && datasets.push(creativeData);
   data.social && datasets.push(socialData);
-  data.sleep && datasets.push(sleep);
-
-  console.log(data.wokeUpMidNight);
+  
   return {
     labels,
     datasets: [
@@ -114,6 +102,15 @@ const getData = ({ labels, data }) => {
         borderColor: "tomato",
         stepped: true,
       },
+      {
+        type: "bar",
+        label: "Sleep",
+        data: data.sleep,
+        borderWidth: 3,
+        yAxisID: "y1",
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      }
     ],
   };
 };
@@ -151,24 +148,29 @@ const options = {
       },
     },
   },
-  // plugins: {
-  //   tooltip: {
-  //     callbacks: {
-  //       label: function (context) {
-  //         console.log({ context });
-  //         let label = "";
-  //         if (context.raw?.length === 2) {
-  //           label += ` ${context.raw[0]} - ${context.raw[1]}`;
-  //         }
-
-  //         if (context.raw?.length === 4) {
-  //           label += `${context.raw[3]} - ${context.raw[1]}`;
-  //         }
-  //         return label;
-  //       },
-  //     },
-  //   },
-  // },
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: function (context) {
+          if (context.dataset.label.toLowerCase() !== 'sleep') {
+            return `${context.dataset.label}: ${context.formattedValue}`;
+          }
+          
+          let label = 'Sleep:';
+          const data = context.raw?.y;
+          if (data.length === 2) {
+            label += `${data[0]} - ${data[1]}`;
+          }
+          
+          if (data.length === 4) {
+            label += `${data[2]} - ${data[1]}`;
+          }
+          
+          return label;
+        },
+      },
+    },
+  },
 };
 
 export const TrackingChart = () => {
@@ -180,10 +182,10 @@ export const TrackingChart = () => {
       data,
     });
   }, [labels, data]);
-
+  
   return (
     <div>
-      <Line options={options} data={formattedData} />
+      <Line options={options} data={formattedData}/>
     </div>
   );
 };

@@ -10,7 +10,7 @@ import { TimeBasedInput } from "../atoms/TimeBasedInput";
 export const TrackerForm = () => {
   const [date, setDate] = useState(getIsoDate());
   const { todayData, refetch } = useFormData(date);
-
+  console.log({ todayData });
   const TimeInput = ({ name }) => {
     return (
       <Input
@@ -22,7 +22,7 @@ export const TrackerForm = () => {
       />
     );
   };
-
+  
   const CheckboxInput = ({ name }) => {
     return (
       <Input
@@ -34,7 +34,7 @@ export const TrackerForm = () => {
       />
     );
   };
-
+  
   const NumberInput = ({ name }) => {
     return (
       <Input
@@ -46,42 +46,49 @@ export const TrackerForm = () => {
       />
     );
   };
-
+  
   return (
     <div>
-      <Input type="date" name="Date" value={date} onChange={setDate} />
-      <EnergyInput date={date} refetch={refetch} />
+      <input
+        type="date"
+        name="Date"
+        value={date}
+        onChange={event => setDate(event.target.value)}/>
+      <EnergyInput
+        date={date}
+        refetch={refetch}
+        values={todayData.energy}/>
       <div className="">
         <Fieldset legend="Sleep">
-          <TimeInput name="went_to_bed" />
-          <TimeInput name="woke_up" />
-          <CheckboxInput name="snooze" />
-          <CheckboxInput name="woke_up_mid_night" />
-          <NumberInput name="nap" />
+          <TimeInput name="went_to_bed"/>
+          <TimeInput name="woke_up"/>
+          <CheckboxInput name="snooze"/>
+          <CheckboxInput name="woke_up_mid_night"/>
+          <NumberInput name="nap"/>
         </Fieldset>
         <Fieldset legend="Consumption">
-          <TimeBasedInput name="eating" refetch={refetch} date={date} />
-          <TimeBasedInput name="coffee" refetch={refetch} date={date} />
-          <TimeBasedInput name="water" refetch={refetch} date={date} />
-          <TimeBasedInput name="sugar" refetch={refetch} date={date} />
-          <CheckboxInput name="alcohol" />
-          <CheckboxInput name="keto" />
-          <CheckboxInput name="stuffed" />
+          <TimeBasedInput values={todayData.eating} name="eating" refetch={refetch} date={date}/>
+          <TimeBasedInput values={todayData.coffee} name="coffee" refetch={refetch} date={date}/>
+          <TimeBasedInput values={todayData.water} name="water" refetch={refetch} date={date}/>
+          <TimeBasedInput values={todayData.sugar} name="sugar" refetch={refetch} date={date}/>
+          <CheckboxInput name="alcohol"/>
+          <CheckboxInput name="keto"/>
+          <CheckboxInput name="stuffed"/>
         </Fieldset>
         <Fieldset legend="Activities (Hours)">
-          <NumberInput name="productivity" />
-          <NumberInput name="family" />
-          <NumberInput name="social" />
-          <NumberInput name="creative" />
-          <NumberInput name="outside" />
-          <NumberInput name="youtube" />
+          <NumberInput name="productivity"/>
+          <NumberInput name="family"/>
+          <NumberInput name="social"/>
+          <NumberInput name="creative"/>
+          <NumberInput name="outside"/>
+          <NumberInput name="youtube"/>
         </Fieldset>
         <Fieldset legend="Well Being">
-          <TimeBasedInput name="shower" refetch={refetch} date={date} />
-          <CheckboxInput name="work_late" />
-          <CheckboxInput name="workout" />
-          <CheckboxInput name="sick" />
-          <CheckboxInput name="porn" />
+          <TimeBasedInput values={todayData.shower} name="shower" refetch={refetch} date={date}/>
+          <CheckboxInput name="work_late"/>
+          <CheckboxInput name="workout"/>
+          <CheckboxInput name="sick"/>
+          <CheckboxInput name="porn"/>
         </Fieldset>
       </div>
     </div>

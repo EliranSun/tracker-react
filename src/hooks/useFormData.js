@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { getTrackingData } from "../utils/firebase";
 import Row from "../models/row";
-import { supabase } from "../utils/supabase";
-import { getIsoDate } from "../utils/date";
 
 export const useFormData = (date) => {
   const [error, setError] = useState(null);
@@ -9,20 +8,16 @@ export const useFormData = (date) => {
   const [rows, setRows] = useState([]);
   const [dateData, setDateData] = useState({});
   const fetch = async () => {
-    supabase
-      .from("tracker")
-      .select("*")
-      .eq("date", date)
-      .then(({ data, error }) => {
-        if (error || !data) {
-          setError(error || new Error("No data found"));
+    getTrackingData(date)
+      .then((data) => {
+        if (!data) {
+          setError(new Error("No data found"));
           return;
         }
-
-        const rowData = data.map((row) => new Row(row));
-        const today = rowData.find((row) => row.date === date);
-
-        setRows(rowData);
+        
+        const today = data.find((row) => row.date === date);
+        
+        setRows(data);
         setDateData({
           ...dateData,
           [date]: today,
@@ -35,19 +30,19 @@ export const useFormData = (date) => {
         setIsLoading(false);
       });
   };
-
+  
   useEffect(() => {
     setIsLoading(true);
     fetch();
   }, [date]);
-
+  
   return {
     error,
     isLoading,
     rows,
     dateData,
     date,
-    todayData: dateData[date] || {},
+    todayData: dateData[date] || new Row(),
     refetch: fetch,
   };
 };

@@ -1,6 +1,7 @@
 import { TrackerForm } from "./components/organisms/TrackerForm";
 import { TrackingChart } from "./components/organisms/TrackingChart";
-import { useLogin } from "./utils/supabase";
+
+import { useLogin } from "./hooks/useLogin";
 
 function App() {
   const { isLoggedIn, login } = useLogin();
@@ -9,7 +10,9 @@ function App() {
     return (
       <section className="App">
         <h1>Please login</h1>
-        <button onClick={login}>MAGIC LOGIN</button>
+        <button onClick={login}>
+          GOOGLE LOGIN
+        </button>
       </section>
     );
   }
