@@ -222,7 +222,7 @@ export const TrackingChart = ({ date }) => {
   }, [labels, data]);
   
   return (
-    <div>
+    <div style={{height:'50vh'}}>
       <button onClick={() => setIsDayView(true)}>DAY</button>
       <button onClick={() => setIsDayView(false)}>WEEK</button>
       <Line options={options} data={formattedData}/>
