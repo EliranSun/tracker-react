@@ -44,8 +44,8 @@ const getData = ({ labels, data }) => {
     fill: false,
     borderWidth: 3,
     yAxisID: "y",
-    borderColor: "rgb(53, 162, 235)",
-    backgroundColor: "rgba(53, 162, 235, 0.5)",
+    borderColor: "rgb(235,205,53)",
+    backgroundColor: "rgba(235,220,53,0.5)",
   };
   const coffeeData = {
     type: "line",
@@ -53,8 +53,8 @@ const getData = ({ labels, data }) => {
     data: data.coffee,
     borderWidth: 3,
     yAxisID: "y1",
-    borderColor: "rgb(255, 99, 132)",
-    backgroundColor: "rgba(255, 99, 132, 0.5)",
+    borderColor: "rgb(38,28,22)",
+    backgroundColor: "rgba(66,48,30,0.5)",
   };
   const productivityData = {
     type: "bar",
@@ -90,10 +90,10 @@ const getData = ({ labels, data }) => {
   const datasets = [];
   
   data.energy && datasets.push(energyData);
-  // data.coffee && datasets.push(coffeeData);
-  // data.productivity && datasets.push(productivityData);
-  // data.creative && datasets.push(creativeData);
-  // data.social && datasets.push(socialData);
+  data.coffee && datasets.push(coffeeData);
+  data.productivity && datasets.push(productivityData);
+  data.creative && datasets.push(creativeData);
+  data.social && datasets.push(socialData);
   
   return {
     labels,
@@ -121,8 +121,8 @@ const getData = ({ labels, data }) => {
         data: data.sleep,
         borderWidth: 3,
         yAxisID: "y1",
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgb(18,33,61)",
+        backgroundColor: "rgba(16,22,44,0.5)",
       },
       {
         type: "bar",
@@ -133,6 +133,16 @@ const getData = ({ labels, data }) => {
         borderColor: "green",
         backgroundColor: "green",
       },
+      {
+        type: "bar",
+        stack: true,
+        label: "YouTube",
+        data: data.youtube,
+        borderWidth: 3,
+        yAxisID: "y2",
+        borderColor: "red",
+        backgroundColor: "red",
+      }
     ],
   };
 };
@@ -169,6 +179,9 @@ const options = {
         drawOnChartArea: false, // only want the grid lines for one axis to show up
       },
     },
+    y2: {
+      beginAtZero: false,
+    }
   },
   plugins: {
     tooltip: {
@@ -196,8 +209,7 @@ const options = {
 };
 
 export const TrackingChart = () => {
-  const type = "day";
-  const { labels, data } = useChartData({ type });
+  const { labels, data } = useChartData({ date: '2023-09-14' });
   const formattedData = useMemo(() => {
     return getData({
       labels,

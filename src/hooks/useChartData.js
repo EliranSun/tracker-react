@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import Row from "../models/row";
 import { nearestFifteen } from "../utils/time";
 import { getTrackingData } from "../utils/firebase";
-import { getLocaleDate } from "../utils/date";
+import { getLocaleDate, getLocaleTime } from "../utils/date";
 import { DateTime } from 'luxon';
 
 const extractTimeBasedData = (data = [], date) => {
   return data.map(item => {
     const value = Object.values(item)[0];
-    const hour = value?.split(":")[0];
+    const hour = Number(value?.split(":")[0]);
     const minute = nearestFifteen(value?.split(":")[1]);
     
     if (hour && minute) {
@@ -61,7 +61,7 @@ const extractSleepHoursData = (data = []) => {
   return [];
 };
 
-export const useChartData = ({ date, type }) => {
+export const useChartData = ({ date }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -83,29 +83,39 @@ export const useChartData = ({ date, type }) => {
           .map((item) => ({ ...item, timestamp: new Date(item.date) }))
           .sort((a, b) => a.timestamp - b.timestamp)
           .forEach((row) => {
-            const date = row.date;
-            foo.creative.push({ y: row.creative, x: row.date });
-            foo.productivity.push({ y: row.productivity, x: row.date });
-            foo.social.push({ y: row.social, x: row.date });
+            const rowDate = row.date;
+            const x = date ? '17:00' : row.date;
+            foo.creative.push({ y: row.creative, x: '12:00' });
+            foo.social.push({ y: row.social, x });
+            foo.youtube.push({ y: row.youtube, x });
+            foo.productivity.push({ y: row.productivity, x });
             
             foo.sleep.push(...extractSleepHoursData(row));
-            foo.coffee.push(...extractTimeBasedData(row.coffee, date));
-            foo.energy.push(...extractValueBasedData(row.energy, date));
+            foo.coffee.push(...extractTimeBasedData(row.coffee, x));
+            foo.energy.push(...extractValueBasedData(row.energy, x));
             
             const napOverTime = DateTime
               .fromObject({ hour: 15, minute: 0 })
               .plus({ minutes: row.nap })
               .toFormat('HH:mm');
-            row.wokeUpMidNight && foo.wokeUpMidNight.push({ y: '4:00', x: row.date });
-            row.snooze && foo.snooze.push({ y: '7:00', x: row.date });
-            row.nap && foo.nap.push({ y: ['15:00', napOverTime], x: row.date });
+            row.wokeUpMidNight && foo.wokeUpMidNight.push({ y: '4:00', x });
+            row.snooze && foo.snooze.push({ y: '7:00', x });
+            row.nap && foo.nap.push({ y: ['15:00', napOverTime], x });
           });
         
         setData({
           data: foo,
-          labels: Array.from({ length: 7 }).map((_, i) => {
+          labels: Array.from({ length: date ? 12 : 7 }).map((_, i) => {
             const today = new Date().getTime();
-            const day = new Date(today - i * 24 * 60 * 60 * 1000);
+            const DAY_IN_MS = 1000 * 60 * 60 * 24;
+            const HOUR_IN_MS = 1000 * 60 * 60;
+            
+            if (date) {
+              const day = new Date(today - i * HOUR_IN_MS);
+              return getLocaleTime(day);
+            }
+            
+            const day = new Date(today - i * DAY_IN_MS).setMinutes(0);
             return getLocaleDate(day);
           }).reverse(),
         });

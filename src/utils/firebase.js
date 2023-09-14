@@ -58,17 +58,31 @@ const TRACKER_COLLECTION = "tracker";
 export const getTrackingData = async (date) => {
   try {
     const rows = [];
-    const querySnapshot = await getDocs(collection(db, TRACKER_COLLECTION));
-    querySnapshot.forEach((doc) => {
-      const row = doc.data();
-      const key = doc.id;
+    const querySnapshot = date
+      ? await getDoc(doc(db, TRACKER_COLLECTION, date))
+      : await getDocs(collection(db, TRACKER_COLLECTION));
+    
+    if (date) {
+      const row = querySnapshot.data();
+      const key = querySnapshot.id;
       rows.push(new Row({
         date: key,
         ...row
       }));
-    });
-    
-    return rows;
+      
+      return rows;
+    } else {
+      querySnapshot.forEach((doc) => {
+        const row = doc.data();
+        const key = doc.id;
+        rows.push(new Row({
+          date: key,
+          ...row
+        }));
+      });
+      
+      return rows;
+    }
   } catch (error) {
     console.error("Error getting document:", error);
     return [];

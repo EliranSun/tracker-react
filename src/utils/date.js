@@ -9,3 +9,10 @@ export const getLocaleDate = (date = new Date()) => {
     year: "numeric",
   }).replaceAll("/", "-")
 };
+
+export const getLocaleTime = (date = new Date()) => {
+  return date.toLocaleString("sv-SE", {
+    hour: "numeric",
+    minute: "numeric",
+  });
+}
