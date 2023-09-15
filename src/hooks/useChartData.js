@@ -33,9 +33,18 @@ const extractValueBasedData = (data = [], date, isDayView) => {
       const key = Object.keys(item)[0];
       const value = Object.values(item)[0];
       const hour = key?.split(":")[0];
+      const minute = key?.split(":")[1];
 
       if (value && key) {
-        return { y: value, x: isDayView ? `${hour}:00` : date };
+        let dt = DateTime.fromObject({ hour, minute });
+        let roundedDt;
+        if (dt.minute >= 30) {
+          roundedDt = dt.plus({ hour: 1 }).startOf("hour");
+        } else {
+          roundedDt = dt.startOf("hour");
+        }
+
+        return { y: value, x: isDayView ? roundedDt.toFormat("HH:mm") : date };
       }
 
       return null;
@@ -124,14 +133,18 @@ export const useChartData = ({ date }) => {
             row.nap && foo.nap.push({ y: ["15:00", napOverTime], x });
           });
 
-        const labels = Array.from({ length: date ? 12 : 7 })
+        const labels = Array.from({ length: date ? 12 * 4 : 7 })
           .map((_, i) => {
             const today = new Date().getTime();
             const DAY_IN_MS = 1000 * 60 * 60 * 24;
             const HOUR_IN_MS = 1000 * 60 * 60;
+            const FIFTEEN_MINUTES_IN_MS = 1000 * 60 * 15;
 
             if (date) {
-              const day = new Date(today - i * HOUR_IN_MS).setMinutes(0);
+              const roundedMinutes = nearestFifteen(new Date().getMinutes());
+              const foo = new Date(today).setMinutes(roundedMinutes);
+              console.log({foo: new Date(foo)});
+              const day = foo - (i * FIFTEEN_MINUTES_IN_MS);
               return getLocaleTime(new Date(day));
             }
 
@@ -141,12 +154,10 @@ export const useChartData = ({ date }) => {
           .reverse();
 
         const labels2 = foo.energy.map((item) => item.x);
-
-        console.log({ coffee: foo.coffee });
-
+        console.log({labels2});
         setData({
           data: foo,
-          labels: Boolean(date) ? labels2 : labels,
+          labels: labels,
         });
       })
       .catch((error) => {
