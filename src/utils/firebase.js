@@ -1,7 +1,21 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  setDoc,
+  getDoc,
+} from "firebase/firestore";
 import Row from "../models/row";
 
 const firebaseConfig = {
@@ -11,7 +25,7 @@ const firebaseConfig = {
   storageBucket: "ynab-47641.appspot.com",
   messagingSenderId: "166507618318",
   appId: "1:166507618318:web:2586479d23433cfc855c5f",
-  measurementId: "G-WL97FFD4EH"
+  measurementId: "G-WL97FFD4EH",
 };
 
 // Initialize Firebase
@@ -35,7 +49,7 @@ export const login = async () => {
     const errorMessage = error.message;
     const email = error.customData.email;
     const credential = GoogleAuthProvider.credentialFromError(error);
-    
+
     return { errorCode, errorMessage, email, credential };
   }
 };
@@ -61,26 +75,30 @@ export const getTrackingData = async (date) => {
     const querySnapshot = date
       ? await getDoc(doc(db, TRACKER_COLLECTION, date))
       : await getDocs(collection(db, TRACKER_COLLECTION));
-    
+
     if (date) {
       const row = querySnapshot.data();
       const key = querySnapshot.id;
-      rows.push(new Row({
-        date: key,
-        ...row
-      }));
-      
+      rows.push(
+        new Row({
+          date: key,
+          ...row,
+        })
+      );
+
       return rows;
     } else {
       querySnapshot.forEach((doc) => {
         const row = doc.data();
         const key = doc.id;
-        rows.push(new Row({
-          date: key,
-          ...row
-        }));
+        rows.push(
+          new Row({
+            date: key,
+            ...row,
+          })
+        );
       });
-      
+
       return rows;
     }
   } catch (error) {
@@ -93,12 +111,12 @@ export const updateTrackingData = async (date, data) => {
   // const trackingDateRef = db.collection(TRACKER_COLLECTION).doc(date);
   const trackingRef = doc(db, TRACKER_COLLECTION, date);
   const snapshot = await getDoc(trackingRef);
-  
+
   if (snapshot.exists()) {
     return updateDoc(trackingRef, data);
   }
-  
+
   return setDoc(trackingRef, data);
 };
 
-export { onAuthStateChanged };
+export { onAuthStateChanged as onAuthChange };

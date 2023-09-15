@@ -36,7 +36,7 @@ const getData = ({ labels, data }) => {
       datasets: [],
     };
   }
-  
+
   const energyData = {
     type: "line",
     label: "Energy levels",
@@ -49,13 +49,13 @@ const getData = ({ labels, data }) => {
     backgroundColor: "rgba(235,220,53,0.5)",
   };
   const coffeeData = {
-    type: "line",
-    label: "Last coffee",
+    type: "scatter",
+    label: "Coffee",
     data: data.coffee,
     borderWidth: 3,
     yAxisID: "y1",
-    borderColor: "rgb(38,28,22)",
-    backgroundColor: "rgba(66,48,30,0.5)",
+    borderColor: "rgb(225,203,189)",
+    backgroundColor: "rgba(110,81,53,0.5)",
   };
   const productivityData = {
     type: "bar",
@@ -87,15 +87,15 @@ const getData = ({ labels, data }) => {
     borderColor: "rgb(53, 162, 235)",
     backgroundColor: "rgba(53, 162, 235, 0.5)",
   };
-  
+
   const datasets = [];
-  
+
   data.energy && datasets.push(energyData);
   data.coffee && datasets.push(coffeeData);
   data.productivity && datasets.push(productivityData);
   data.creative && datasets.push(creativeData);
   data.social && datasets.push(socialData);
-  
+
   return {
     labels,
     datasets: [
@@ -122,8 +122,8 @@ const getData = ({ labels, data }) => {
         data: data.sleep,
         borderWidth: 3,
         yAxisID: "y1",
-        borderColor: "rgb(18,33,61)",
-        backgroundColor: "rgba(16,22,44,0.5)",
+        borderColor: "rgb(66,161,143)",
+        backgroundColor: "rgb(79,180,161)",
       },
       {
         type: "bar",
@@ -143,7 +143,7 @@ const getData = ({ labels, data }) => {
         yAxisID: "y2",
         borderColor: "red",
         backgroundColor: "red",
-      }
+      },
     ],
   };
 };
@@ -182,26 +182,26 @@ const options = {
     },
     y2: {
       beginAtZero: false,
-    }
+    },
   },
   plugins: {
     tooltip: {
       callbacks: {
         label: function (context) {
-          if (context.dataset.label.toLowerCase() !== 'sleep') {
+          if (context.dataset.label.toLowerCase() !== "sleep") {
             return `${context.dataset.label}: ${context.formattedValue}`;
           }
-          
-          let label = 'Sleep:';
+
+          let label = "Sleep:";
           const data = context.raw?.y;
           if (data.length === 2) {
             label += `${data[0]} - ${data[1]}`;
           }
-          
+
           if (data.length === 4) {
             label += `${data[2]} - ${data[1]}`;
           }
-          
+
           return label;
         },
       },
@@ -212,7 +212,7 @@ const options = {
 export const TrackingChart = ({ date }) => {
   const [isDayView, setIsDayView] = useState(false);
   const { labels, data } = useChartData({
-    date: isDayView && getLocaleDate(date ? new Date(date) : undefined)
+    date: isDayView && getLocaleDate(date ? new Date(date) : undefined),
   });
   const formattedData = useMemo(() => {
     return getData({
@@ -220,12 +220,12 @@ export const TrackingChart = ({ date }) => {
       data,
     });
   }, [labels, data]);
-  
+
   return (
-    <div style={{height:'50vh'}}>
+    <div style={{ height: "50vh" }}>
       <button onClick={() => setIsDayView(true)}>DAY</button>
       <button onClick={() => setIsDayView(false)}>WEEK</button>
-      <Line options={options} data={formattedData}/>
+      <Line options={options} data={formattedData} />
     </div>
   );
 };

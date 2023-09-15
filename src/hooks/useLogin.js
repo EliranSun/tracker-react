@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { login, auth, onAuthStateChanged } from "../utils/firebase";
+import { login, auth, onAuthChange } from "../utils/firebase";
 
 export const useLogin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthChange(auth, (user) => {
       if (user) {
         // alert(`Welcome ${user.displayName}!`);
         setIsLoggedIn(true);
@@ -15,9 +15,9 @@ export const useLogin = () => {
       }
     });
   }, []);
-  
+
   return {
     isLoggedIn,
-    login
+    login,
   };
-}
+};
