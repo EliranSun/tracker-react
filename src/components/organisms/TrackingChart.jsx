@@ -29,7 +29,7 @@ ChartJS.register(
   BarController
 );
 
-const getData = ({ labels, data }) => {
+const getData = ({ labels, data, isDayView }) => {
   if (!labels || !data) {
     return {
       labels: [],
@@ -122,6 +122,7 @@ const getData = ({ labels, data }) => {
         data: data.sleep,
         borderWidth: 3,
         yAxisID: "y1",
+        indexAxis: isDayView ? 'y' : 'x',
         borderColor: "rgb(66,161,143)",
         backgroundColor: "rgb(79,180,161)",
       },
@@ -218,8 +219,9 @@ export const TrackingChart = ({ date }) => {
     return getData({
       labels,
       data,
+      isDayView
     });
-  }, [labels, data]);
+  }, [labels, data, isDayView]);
 
   return (
     <div style={{ height: "50vh" }}>

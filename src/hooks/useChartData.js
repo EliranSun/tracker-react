@@ -52,7 +52,7 @@ const extractValueBasedData = (data = [], date, isDayView) => {
     .filter(Boolean);
 };
 
-const extractSleepHoursData = (data = []) => {
+const extractSleepHoursData = (data = [], isDayView = false) => {
   const wentToBedHour = Number(data.wentToBed?.split(":")[0]);
   const wentToBedMinute = nearestFifteen(data.wentToBed?.split(":")[1]);
   const wokeUpHour = Number(data.wokeUp?.split(":")[0]);
@@ -67,6 +67,10 @@ const extractSleepHoursData = (data = []) => {
         `${wentToBedHour}:${wentToBedMinute}`,
         `${wokeUpHour}:${wokeUpMinute}`
       );
+
+      if (isDayView) {
+        return [{ x: ['07:15', '08:30'], y: '10:00' }];
+      }
       return [{ x: data.date, y: thisDaySleep }];
     }
 
@@ -117,7 +121,7 @@ export const useChartData = ({ date }) => {
             foo.youtube.push({ y: row.youtube, x });
             foo.productivity.push({ y: row.productivity, x });
 
-            foo.sleep.push(...extractSleepHoursData(row));
+            foo.sleep.push(...extractSleepHoursData(row, Boolean(date)));
             foo.coffee.push(
               ...extractTimeBasedData(row.coffee, rowDate, Boolean(date))
             );
