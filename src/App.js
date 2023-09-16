@@ -8,7 +8,7 @@ import { getIsoDate } from "./utils/date";
 function App() {
   const { isLoggedIn, login } = useLogin();
   const [date, setDate] = useState(getIsoDate());
-  
+
   if (!isLoggedIn) {
     return (
       <section className="App">
@@ -19,9 +19,9 @@ function App() {
       </section>
     );
   }
-  
+
   return (
-    <section className="App">
+    <>
       <button onClick={() => window.location.reload()}>
         Refresh Page
       </button>
@@ -30,9 +30,11 @@ function App() {
         name="Date"
         value={date}
         onChange={event => setDate(event.target.value)}/>
-      <TrackingChart date={date}/>
-      <TrackerForm date={date}/>
-    </section>
+      <section className="App">
+        <TrackingChart date={date}/>
+        <TrackerForm date={date}/>
+      </section>
+    </>
   );
 }
 
