@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { snakeCase, noop } from "lodash";
 import { SubmitButton } from "./SubmitButton";
 import { getTime } from "../../utils/time";
-import { DateTime } from "luxon";
 
 export const Input = ({
   name,
@@ -13,43 +12,17 @@ export const Input = ({
   min,
   max,
   refetch = noop,
-  submitSameValues = false,
-  isTimeInput = false,
+  isTimeBasedValue = false
 }) => {
-  const inputValue = useMemo(() => {
-    if (value) return value;
-    
-    if (values && values.length > 0) {
-      const lastValue = values.at(-1);
-      return Object.values(lastValue)[0];
-    }
-    
-    if (isTimeInput) {
-      return DateTime.now().toFormat("HH:mm");
-    }
-    
-    return "";
-  }, [values, value]);
-  const [innerValue, setInnerValue] = useState(inputValue);
   const snakedName = snakeCase(name);
-  const isDisabled = useMemo(() => {
-    if (isTimeInput)
-      return !values || values.length === 0;
-      
-    if (submitSameValues) 
-      return false;
-      
-    return innerValue != inputValue;
-  }, []);
-  
-  useEffect(() => {
-    setInnerValue(inputValue);
-  }, [inputValue]);
-  
+  const [innerValue, setInnerValue] = useState("");
   const submitData = useMemo(() => {
+    if (isTimeBasedValue) {
+      return [...values, { [getTime()]: innerValue }];
+    }
+
     if (values) {
-      const time = getTime();
-      return [...values, { [time]: innerValue }];
+      return [...values, innerValue];
     }
     
     if (type === "checkbox") {
@@ -58,16 +31,30 @@ export const Input = ({
     
     return innerValue;
   }, [innerValue, type, values]);
-  
+  const currentValue = useMemo(() => {
+    if (value) return value;
+    if (!values) return "";
+
+    if (isTimeBasedValue) {
+      return values.map(item => {
+        const key = Object.keys(item)[0];
+        return Object.values(item)[0];
+      }).at(-1);
+    }
+
+    return values.at(-1);
+  },[value, values]);
+
   return (
     <div className="field">
       <label htmlFor={snakedName}>{name.toUpperCase()}</label>
+      <span className="text-xl"><b>{currentValue}</b> →</span>
       <input
         type={type}
         id={snakedName}
         name={snakedName}
         value={innerValue}
-        defaultChecked={inputValue}
+        defaultChecked={Boolean(value)}
         min={min}
         max={max}
         onChange={(e) => {
@@ -83,7 +70,7 @@ export const Input = ({
           date={date}
           name={name}
           data={submitData}
-          isDisabled={isDisabled}
+          isDisabled={innerValue === "" || innerValue == value}
           onSuccess={() => setTimeout(refetch, 2500)}
         />
     </div>

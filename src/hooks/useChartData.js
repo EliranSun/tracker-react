@@ -14,7 +14,6 @@ const extractTimeBasedData = (data = [], date, isDayView = false) => {
 
       if (hour && minute) {
         const time = `${hour}:${minute}`;
-        console.log(time, Object.values(item)[0]);
         if (isDayView) {
           return { y: "12:00", x: `${hour}:${minute}` };
         }
@@ -147,7 +146,6 @@ export const useChartData = ({ date }) => {
             if (date) {
               const roundedMinutes = nearestFifteen(new Date().getMinutes());
               const foo = new Date(today).setMinutes(roundedMinutes);
-              console.log({foo: new Date(foo)});
               const day = foo - (i * FIFTEEN_MINUTES_IN_MS);
               return getLocaleTime(new Date(day));
             }
@@ -158,7 +156,6 @@ export const useChartData = ({ date }) => {
           .reverse();
 
         const labels2 = foo.energy.map((item) => item.x);
-        console.log({labels2});
         setData({
           data: foo,
           labels: labels,
