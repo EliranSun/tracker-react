@@ -11,6 +11,7 @@ export const TimeBasedInput = ({ name, date, refetch, values }) => {
         values={values}
         date={date}
         refetch={refetch}
+        isTimeInput
       />
     </div>
   );
