@@ -70,14 +70,12 @@ export const Input = ({
         }}
       />
       {type === 'range' && innerValue}
-      {(submitSameValues || innerValue != inputValue) && (
         <SubmitButton
           date={date}
           name={name}
           data={submitData}
           onSuccess={() => setTimeout(refetch, 2500)}
         />
-      )}
     </div>
   );
 };
