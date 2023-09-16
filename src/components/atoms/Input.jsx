@@ -32,6 +32,15 @@ export const Input = ({
   }, [values, value]);
   const [innerValue, setInnerValue] = useState(inputValue);
   const snakedName = snakeCase(name);
+  const isDisabled = useMemo(() => {
+    if (isTimeInput)
+      return !values || values.length === 0;
+      
+    if (submitSameValues) 
+      return false;
+      
+    return innerValue != inputValue;
+  }, []);
   
   useEffect(() => {
     setInnerValue(inputValue);
@@ -74,6 +83,7 @@ export const Input = ({
           date={date}
           name={name}
           data={submitData}
+          isDisabled={isDisabled}
           onSuccess={() => setTimeout(refetch, 2500)}
         />
     </div>
