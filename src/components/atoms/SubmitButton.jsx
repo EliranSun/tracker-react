@@ -15,6 +15,7 @@ export const SubmitButton = ({
   date,
   onSuccess = noop,
   onError = noop,
+  isDisabled = true,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -23,7 +24,7 @@ export const SubmitButton = ({
   
   return (
     <button
-      disabled={isLoading}
+      disabled={isDisabled || isLoading}
       onClick={async () => {
         setIsLoading(true);
         try {
