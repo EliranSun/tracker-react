@@ -48,6 +48,7 @@ export const TrackingChart = ({ date }) => {
     <div className="md:w-2/3">
       <Line
         data={data}
+        height="50vh"
         options={{
           interaction: {
             mode: "index",
