@@ -15,6 +15,7 @@ import { Line } from "react-chartjs-2";
 import { useChartData } from "../../hooks/useChartData";
 import { useState } from "react";
 import { getLocaleDate } from "../../utils/date";
+import { Button } from "../atoms/Button";
 
 ChartJS.register(
   LineElement,
@@ -38,15 +39,13 @@ const TwentyFourHoursFifteenMinutesIntervals = Array.from(
 });
 
 export const TrackingChart = ({ date }) => {
-  const [isDayView, setIsDayView] = useState(false);
+  const [isDayView, setIsDayView] = useState(true);
   const data = useChartData({
     date: isDayView && getLocaleDate(date ? new Date(date) : undefined),
   });
 
   return (
-    <div style={{ height: "50vh" }}>
-      <button onClick={() => setIsDayView(true)}>DAY</button>
-      <button onClick={() => setIsDayView(false)}>WEEK</button>
+    <div className="md:w-2/3">
       <Line
         data={data}
         options={{
@@ -57,9 +56,11 @@ export const TrackingChart = ({ date }) => {
           cubicInterpolationMode: "monotone",
           scales: {
             y: {
+              beginAtZero: true,
               stacked: false,
             },
             y1: {
+              beginAtZero: false,
               adapter: "luxon",
               type: "category",
               labels: TwentyFourHoursFifteenMinutesIntervals,
@@ -74,7 +75,7 @@ export const TrackingChart = ({ date }) => {
               },
             },
             y2: {
-              beginAtZero: false,
+              beginAtZero: true,
             },
           },
           legend: {
@@ -104,6 +105,12 @@ export const TrackingChart = ({ date }) => {
             },
           },
         }}/>
+
+      <Button className="mx-2 my-4" onClick={() => setIsDayView(true)}>DAY</Button>
+      <Button className="mx-2 my-4" onClick={() => setIsDayView(false)}>WEEK</Button>
+      <Button onClick={() => window.location.reload()}>
+        Refresh Page
+      </Button>
     </div>
   );
 };

@@ -1,8 +1,3 @@
-import {
-  updateData,
-  updateEnergy,
-  updateTimeBasedValue,
-} from "../../utils/updateData";
 import { useState } from "react";
 import { noop } from "lodash";
 import { updateTrackingData } from "../../utils/firebase";
@@ -15,13 +10,13 @@ export const SubmitButton = ({
   date,
   onSuccess = noop,
   onError = noop,
-  isDisabled = true,
+  isDisabled = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const loweredName = name.toLowerCase();
-  
+
   return (
     <button
       disabled={isDisabled || isLoading}
@@ -39,12 +34,12 @@ export const SubmitButton = ({
           onError();
         }
       }}>
-      {success && "SUCCESS!"}
+      {success && "✅"}
       {error && error}
       {!success && !error
         ? isLoading
-          ? "Submitting..."
-          : `SUBMIT ${name}`
+          ? "⏳"
+          : '💾'
         : null}
     </button>
   );

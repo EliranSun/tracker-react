@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { snakeCase, noop } from "lodash";
+import { noop, snakeCase } from "lodash";
 import { SubmitButton } from "./SubmitButton";
 import { getTime } from "../../utils/time";
 
@@ -24,11 +24,11 @@ export const Input = ({
     if (values) {
       return [...values, innerValue];
     }
-    
+
     if (type === "checkbox") {
       return Boolean(innerValue);
     }
-    
+
     return innerValue;
   }, [innerValue, type, values]);
   const currentValue = useMemo(() => {
@@ -43,36 +43,42 @@ export const Input = ({
     }
 
     return values.at(-1);
-  },[value, values]);
+  }, [value, values]);
 
   return (
-    <div className="field">
-      <label htmlFor={snakedName}>{name.toUpperCase()}</label>
-      <span className="text-xl"><b>{currentValue}</b> →</span>
-      <input
-        type={type}
-        id={snakedName}
-        name={snakedName}
-        value={innerValue}
-        defaultChecked={Boolean(value)}
-        min={min}
-        max={max}
-        onChange={(e) => {
-          if (type === "checkbox") {
-            setInnerValue(e.target.checked);
-            return;
-          }
-          setInnerValue(e.target.value);
-        }}
-      />
-      {type === 'range' && innerValue}
-        <SubmitButton
-          date={date}
-          name={name}
-          data={submitData}
-          isDisabled={innerValue === "" || innerValue == value}
-          onSuccess={() => setTimeout(refetch, 2500)}
+    <div className="w-full items-center flex text-left gap-4 border border-white">
+      <div className="w-32 text-2xl border-x-2 border-white block flex items-center justify-center h-12 font-black">
+        {currentValue}
+      </div>
+      <div className="flex justify-between w-full items-center">
+        <label htmlFor={snakedName}>
+          {name.replaceAll("_", " ").toUpperCase()}
+        </label>
+        <input
+          type={type}
+          className="text-black max-w-[80px]"
+          id={snakedName}
+          name={snakedName}
+          value={innerValue}
+          defaultChecked={Boolean(value)}
+          min={min}
+          max={max}
+          onChange={(e) => {
+            if (type === "checkbox") {
+              setInnerValue(e.target.checked);
+              return;
+            }
+            setInnerValue(e.target.value);
+          }}
         />
+      </div>
+      <SubmitButton
+        date={date}
+        name={name}
+        isDisabled={innerValue === "" || innerValue == value}
+        data={submitData}
+        onSuccess={() => setTimeout(refetch, 2500)}
+      />
     </div>
   );
 };

@@ -22,15 +22,15 @@ function App() {
 
   return (
     <>
-      <button onClick={() => window.location.reload()}>
-        Refresh Page
-      </button>
-      <input
-        type="date"
-        name="Date"
-        value={date}
-        onChange={event => setDate(event.target.value)}/>
-      <section className="App">
+      <div className="flex w-full justify-center">
+        <input
+          type="date"
+          name="Date"
+          className="text-black"
+          value={date}
+          onChange={event => setDate(event.target.value)}/>
+      </div>
+      <section className="max-w-6xl m-auto flex items-start">
         <TrackingChart date={date}/>
         <TrackerForm date={date}/>
       </section>

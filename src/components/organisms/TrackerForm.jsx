@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { camelCase } from "lodash";
 import { Fieldset } from "../molecules/Fieldset";
 import { Input } from "../atoms/Input";
 import { useFormData } from "../../hooks/useFormData";
-import { getIsoDate } from "../../utils/date";
 import { EnergyInput } from "../atoms/EnergyInput";
 import { TimeBasedInput } from "../atoms/TimeBasedInput";
+import { Button } from "../atoms/Button";
 
 export const TrackerForm = ({ date }) => {
   const { todayData, refetch } = useFormData(date);
@@ -20,7 +19,7 @@ export const TrackerForm = ({ date }) => {
       />
     );
   };
-  
+
   const CheckboxInput = ({ name }) => {
     return (
       <Input
@@ -32,7 +31,7 @@ export const TrackerForm = ({ date }) => {
       />
     );
   };
-  
+
   const NumberInput = ({ name }) => {
     return (
       <Input
@@ -44,14 +43,14 @@ export const TrackerForm = ({ date }) => {
       />
     );
   };
-  
+
   return (
-    <div>
+    <div className="w-full px-4">
       <EnergyInput
         date={date}
         refetch={refetch}
         values={todayData.energy}/>
-      <div className="">
+      <div className="w-full">
         <Fieldset legend="Sleep">
           <TimeInput name="went_to_bed"/>
           <TimeInput name="woke_up"/>
@@ -84,6 +83,9 @@ export const TrackerForm = ({ date }) => {
           <CheckboxInput name="porn"/>
         </Fieldset>
       </div>
+      <Button onClick={() => window.location.reload()}>
+        Refresh Page
+      </Button>
     </div>
   );
 };
