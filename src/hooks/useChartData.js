@@ -118,8 +118,7 @@ export const useChartData = ({ date }) => {
 
             formattedData.energy.push(...extractValueBasedData(row.energy, x, isDayView));
             formattedData.coffee.push(...extractTimeBasedData(row.coffee, rowDate, isDayView));
-            const sleepData = extractSleepHoursData(row, isDayView);
-            console.log({ sleepData });
+            formattedData.eating.push(...extractTimeBasedData(row.eating, rowDate, isDayView));
             formattedData.sleep.push(...extractSleepHoursData(row, isDayView));
 
             formattedData.creative.push({ y: row.creative, x });
@@ -173,6 +172,16 @@ export const useChartData = ({ date }) => {
               yAxisID: "y",
               borderColor: "rgb(225,203,189)",
               backgroundColor: "rgba(110,81,53,0.5)",
+              hidden: false,
+            },
+            {
+              type: "scatter",
+              label: "Eating",
+              data: formattedData.eating,
+              borderWidth: 3,
+              yAxisID: "y",
+              borderColor: "purple",
+              backgroundColor: "purple",
               hidden: false,
             },
             {
