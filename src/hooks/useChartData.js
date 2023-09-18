@@ -49,7 +49,7 @@ const extractValueBasedData = (data = [], date, isDayView) => {
     .filter(Boolean);
 };
 
-const extractSleepHoursData = (data = [], isDayView = false) => {
+const extractSleepHoursData = (data = [], nextDayData, isDayView = false) => {
   const wentToBedHour = Number(data.wentToBed?.split(":")[0]);
   const wentToBedMinute = nearestFifteen(data.wentToBed?.split(":")[1]);
   const wokeUpHour = data.wokeUp?.split(":")[0];
@@ -59,7 +59,13 @@ const extractSleepHoursData = (data = [], isDayView = false) => {
   const previousDaySleep = [];
 
   if (isDayView) {
-    return [{ x: ['06:00', `${wokeUpHour}:00`], y: 0 }];
+    const foo = [{ x: ['06:00', `${wokeUpHour}:00`], y: 0 }];
+    if (nextDayData && nextDayData.wentToBed) {
+        const nextWentToBedHour = Number(nextDayData.wentToBed?.split(":")[0]);
+        if (nextWentToBedHour > 6) foo.push({ x: [`${nextWentToBedHour}:00`, "0:00"], y: 0 });
+     }
+    
+    return foo;
   }
 
   if (data.wentToBed && data.wokeUp) {
@@ -126,7 +132,7 @@ export const useChartData = ({ date }) => {
           })
           .map((item) => ({ ...item, timestamp: new Date(item.date) }))
           .sort((a, b) => a.timestamp - b.timestamp)
-          .forEach((row) => {
+          .forEach((row, index) => {
             const rowDate = row.date;
             const x = isDayView ? "12:00" : row.date;
 
@@ -147,7 +153,7 @@ export const useChartData = ({ date }) => {
             formattedData.shower.push(...extractTimeBasedData(row.shower, rowDate, isDayView));
             formattedData.water.push(...extractTimeBasedData(row.water, rowDate, isDayView));
 
-            formattedData.sleep.push(...extractSleepHoursData(row, isDayView));
+            formattedData.sleep.push(...extractSleepHoursData(row, data[index + 1], isDayView));
 
             formattedData.creative.push({ y: row.creative, x });
             formattedData.social.push({ y: row.social, x });
