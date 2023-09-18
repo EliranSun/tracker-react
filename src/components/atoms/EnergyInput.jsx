@@ -7,6 +7,7 @@ export const EnergyInput = ({ values, date, refetch }) => {
       name="energy"
       min={1}
       max={10}
+      showValue
       isTimeBasedValue
       values={values}
       refetch={refetch}
