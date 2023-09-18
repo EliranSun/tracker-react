@@ -48,7 +48,9 @@ export const Input = ({
   return (
     <div className="w-full items-center flex text-left gap-4 border border-white">
       <div className="w-32 text-2xl border-x-2 border-white block flex items-center justify-center h-12 font-black">
-        {currentValue}
+        {type === "checkbox" ?
+          currentValue ? "Yes" : "No"
+          : currentValue}
       </div>
       <div className="flex justify-between w-full items-center">
         <label htmlFor={snakedName}>
