@@ -32,9 +32,10 @@ function App() {
           className="text-black"
           value={date}
           onChange={event => setDate(event.target.value)}/>
+        <button onClick={() => window.location.reload()}>Refresh page</button>
       </div>
-      <section className="">
-        <div className="">
+      <section className="flex flex-col-reverse md:flex-row md:flex-row gap-4">
+        <div className="flex flex-col gap-4">
           <TrackerQuickActions date={date} userName={userName} data={todayData}/>
           <TrackerForm date={date} data={todayData} refetch={refetch}/>
         </div>

@@ -63,7 +63,7 @@ export const TrackingChart = ({ date }) => {
           datasets: data.datasets,
         }}
         width={window.innerWidth}
-        height={window.innerHeight}
+        height={window.innerHeight / 2}
         options={{
           interaction: {
             mode: "index",
