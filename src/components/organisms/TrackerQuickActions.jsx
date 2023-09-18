@@ -8,7 +8,7 @@ const Fields = {
   wokeUp: { key: "woke_up", label: "🥱" },
   coffee: { key: "coffee", label: "☕️" },
   eating: { key: "eating", label: "🍽️" },
-  water: { key: "water", label: "🥛" },
+  water: { key: "water", label: "💧" },
   sugar: { key: "sugar", label: "🍞" },
   shower: { key: "shower", label: "🚿" },
 };
