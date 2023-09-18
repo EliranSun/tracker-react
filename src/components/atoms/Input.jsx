@@ -46,14 +46,14 @@ export const Input = ({
   }, [innerValue, isTimeBasedValue, type, values]);
 
   useEffect(() => {
-    if (type === 'range') {
+    if (type === 'range' && currentValue) {
       setInnerValue(currentValue);
     }
   }, [currentValue, type]);
 
   return (
-    <div className="w-full items-center flex text-left gap-4 border border-white">
-      <div className="w-32 text-2xl border-x-2 border-white block flex items-center justify-center h-12 font-black">
+    <div className="w-full items-center flex text-left gap-4 border-t border-b border-white">
+      <div className="w-32 text-2xl border-r-2 border-white block flex items-center justify-center h-12 font-black">
         {type === "checkbox" ?
           currentValue ? "Yes" : "No"
           : currentValue}
@@ -65,7 +65,7 @@ export const Input = ({
         </label>
         <input
           type={type}
-          className="text-black max-w-[200px]"
+          className="text-black max-w-[200px] w-full"
           id={snakedName}
           name={snakedName}
           value={innerValue}

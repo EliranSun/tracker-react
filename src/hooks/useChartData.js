@@ -14,7 +14,7 @@ const extractTimeBasedData = (data = [], date, isDayView = false) => {
 
         if (hour && minute) {
           if (isDayView) {
-            return { y: 0, x: `${hour}:00` };
+            return { y: 5, x: `${hour}:00` };
           }
 
           return { y: hour ? `${hour}:${minute}` : null, x: date };
@@ -143,6 +143,10 @@ export const useChartData = ({ date }) => {
             }
             formattedData.coffee.push(...extractTimeBasedData(row.coffee, rowDate, isDayView));
             formattedData.eating.push(...extractTimeBasedData(row.eating, rowDate, isDayView));
+            formattedData.sugar.push(...extractTimeBasedData(row.sugar, rowDate, isDayView));
+            formattedData.shower.push(...extractTimeBasedData(row.shower, rowDate, isDayView));
+            formattedData.water.push(...extractTimeBasedData(row.water, rowDate, isDayView));
+
             formattedData.sleep.push(...extractSleepHoursData(row, isDayView));
 
             formattedData.creative.push({ y: row.creative, x });
@@ -183,6 +187,11 @@ export const useChartData = ({ date }) => {
 
         setData({
           labels: isDayView ? AwakeHours : labels,
+          dayLabels: labels.map((item) => DateTime.fromObject({
+            year: item.split("-")[0],
+            month: item.split("-")[1],
+            day: item.split("-")[2],
+          }).toFormat("cccc")),
           datasets: [
             {
               type: "line",
@@ -198,6 +207,7 @@ export const useChartData = ({ date }) => {
             {
               type: "scatter",
               label: "Coffee",
+              stacked: true,
               data: formattedData.coffee,
               borderWidth: 3,
               yAxisID: "y",
@@ -207,7 +217,30 @@ export const useChartData = ({ date }) => {
             },
             {
               type: "scatter",
+              label: "Sugar",
+              stacked: true,
+              data: formattedData.sugar,
+              borderWidth: 3,
+              yAxisID: "y",
+              borderColor: "white",
+              backgroundColor: "white",
+              hidden: false,
+            },
+            {
+              type: "scatter",
+              label: "Shower",
+              data: formattedData.shower,
+              borderWidth: 3,
+              stacked: true,
+              yAxisID: "y",
+              borderColor: "rgb(182,255,254)",
+              backgroundColor: "rgb(182,255,254)",
+              hidden: false,
+            },
+            {
+              type: "scatter",
               label: "Eating",
+              stacked: true,
               data: formattedData.eating,
               borderWidth: 3,
               yAxisID: "y",

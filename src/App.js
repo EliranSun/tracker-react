@@ -4,10 +4,13 @@ import { TrackingChart } from "./components/organisms/TrackingChart";
 import { useLogin } from "./hooks/useLogin";
 import { useState } from "react";
 import { getIsoDate } from "./utils/date";
+import { TrackerQuickActions } from "./components/organisms/TrackerQuickActions";
+import { useFormData } from "./hooks/useFormData";
 
 function App() {
-  const { isLoggedIn, login } = useLogin();
+  const { isLoggedIn, login, userName } = useLogin();
   const [date, setDate] = useState(getIsoDate());
+  const { todayData, refetch } = useFormData(date);
 
   if (!isLoggedIn) {
     return (
@@ -30,9 +33,12 @@ function App() {
           value={date}
           onChange={event => setDate(event.target.value)}/>
       </div>
-      <section className="max-w-6xl m-auto flex items-start justify-center">
+      <section className="">
+        <div className="">
+          <TrackerQuickActions date={date} userName={userName} data={todayData}/>
+          <TrackerForm date={date} data={todayData} refetch={refetch}/>
+        </div>
         <TrackingChart date={date}/>
-        <TrackerForm date={date}/>
       </section>
     </>
   );

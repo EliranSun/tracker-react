@@ -44,12 +44,26 @@ export const TrackingChart = ({ date }) => {
     date: isDayView && getLocaleDate(date ? new Date(date) : undefined),
   });
 
+  let additionalOptions = {};
+  if (!isDayView) {
+    additionalOptions = {
+      x1: {
+        beginAtZero: true,
+        labels: data.dayLabels,
+        hidden: true
+      },
+    }
+  }
+
   return (
     <div className="md:w-2/3">
       <Line
-        data={data}
+        data={{
+          labels: data.labels,
+          datasets: data.datasets,
+        }}
         width={window.innerWidth}
-        height={window.innerHeight / 2}
+        height={window.innerHeight}
         options={{
           interaction: {
             mode: "index",
@@ -57,8 +71,9 @@ export const TrackingChart = ({ date }) => {
           },
           cubicInterpolationMode: "monotone",
           scales: {
+            ...additionalOptions,
             y: {
-              beginAtZero: true,
+              beginAtZero: false,
               stacked: false,
             },
             y1: {
@@ -77,7 +92,7 @@ export const TrackingChart = ({ date }) => {
               },
             },
             y2: {
-              beginAtZero: true,
+              beginAtZero: false,
             },
           },
           legend: {
@@ -107,16 +122,17 @@ export const TrackingChart = ({ date }) => {
             },
           },
         }}/>
-
-      <Button className="mx-2 my-4" onClick={() => setIsDayView(true)}>DAY</Button>
-      <Button className="mx-2 my-4" onClick={() => setIsDayView(false)}>WEEK</Button>
-      <Button onClick={() => {
-        // dummy state to force useEffect in hook to run
-        setIsDayView(!isDayView);
-        setIsDayView(!isDayView);
-      }}>
-        Refresh Chart
-      </Button>
+      <div>
+        <Button className="mx-2 my-4" onClick={() => setIsDayView(true)}>DAY</Button>
+        <Button className="mx-2 my-4" onClick={() => setIsDayView(false)}>WEEK</Button>
+        <Button onClick={() => {
+          // dummy state to force useEffect in hook to run
+          setIsDayView(false);
+          setIsDayView(true);
+        }}>
+          Refresh Chart
+        </Button>
+      </div>
     </div>
   );
 };

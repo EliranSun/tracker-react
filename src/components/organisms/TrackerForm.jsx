@@ -1,12 +1,10 @@
 import { camelCase } from "lodash";
 import { Fieldset } from "../molecules/Fieldset";
 import { Input } from "../atoms/Input";
-import { useFormData } from "../../hooks/useFormData";
 import { EnergyInput } from "../atoms/EnergyInput";
 import { TimeBasedInput } from "../atoms/TimeBasedInput";
 
-export const TrackerForm = ({ date }) => {
-  const { todayData, refetch } = useFormData(date);
+export const TrackerForm = ({ date, data, refetch }) => {
   const TimeInput = ({ name }) => {
     return (
       <Input
@@ -14,7 +12,7 @@ export const TrackerForm = ({ date }) => {
         name={name}
         date={date}
         refetch={refetch}
-        value={todayData[camelCase(name)]}
+        value={data[camelCase(name)]}
       />
     );
   };
@@ -26,7 +24,7 @@ export const TrackerForm = ({ date }) => {
         name={name}
         date={date}
         refetch={refetch}
-        value={Boolean(todayData[camelCase(name)])}
+        value={Boolean(data[camelCase(name)])}
       />
     );
   };
@@ -38,17 +36,17 @@ export const TrackerForm = ({ date }) => {
         name={name}
         date={date}
         refetch={refetch}
-        value={todayData[camelCase(name)]}
+        value={data[camelCase(name)]}
       />
     );
   };
 
   return (
-    <div className="w-full px-4">
+    <div className="w-full p-4 border border-white">
       <EnergyInput
         date={date}
         refetch={refetch}
-        values={todayData.energy}/>
+        values={data.energy}/>
       <div className="w-full">
         <Fieldset legend="Sleep">
           <TimeInput name="went_to_bed"/>
@@ -58,10 +56,10 @@ export const TrackerForm = ({ date }) => {
           <NumberInput name="nap"/>
         </Fieldset>
         <Fieldset legend="Consumption">
-          <TimeBasedInput values={todayData.eating} name="eating" refetch={refetch} date={date}/>
-          <TimeBasedInput values={todayData.coffee} name="coffee" refetch={refetch} date={date}/>
-          <TimeBasedInput values={todayData.water} name="water" refetch={refetch} date={date}/>
-          <TimeBasedInput values={todayData.sugar} name="sugar" refetch={refetch} date={date}/>
+          <TimeBasedInput values={data.eating} name="eating" refetch={refetch} date={date}/>
+          <TimeBasedInput values={data.coffee} name="coffee" refetch={refetch} date={date}/>
+          <TimeBasedInput values={data.water} name="water" refetch={refetch} date={date}/>
+          <TimeBasedInput values={data.sugar} name="sugar" refetch={refetch} date={date}/>
           <CheckboxInput name="alcohol"/>
           <CheckboxInput name="keto"/>
           <CheckboxInput name="stuffed"/>
@@ -75,7 +73,7 @@ export const TrackerForm = ({ date }) => {
           <NumberInput name="youtube"/>
         </Fieldset>
         <Fieldset legend="Well Being">
-          <TimeBasedInput values={todayData.shower} name="shower" refetch={refetch} date={date}/>
+          <TimeBasedInput values={data.shower} name="shower" refetch={refetch} date={date}/>
           <CheckboxInput name="work_late"/>
           <CheckboxInput name="workout"/>
           <CheckboxInput name="sick"/>
