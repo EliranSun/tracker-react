@@ -30,7 +30,7 @@ function App() {
           value={date}
           onChange={event => setDate(event.target.value)}/>
       </div>
-      <section className="max-w-6xl m-auto flex items-start">
+      <section className="max-w-6xl m-auto flex items-start justify-center">
         <TrackingChart date={date}/>
         <TrackerForm date={date}/>
       </section>

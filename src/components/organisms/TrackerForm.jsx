@@ -4,7 +4,6 @@ import { Input } from "../atoms/Input";
 import { useFormData } from "../../hooks/useFormData";
 import { EnergyInput } from "../atoms/EnergyInput";
 import { TimeBasedInput } from "../atoms/TimeBasedInput";
-import { Button } from "../atoms/Button";
 
 export const TrackerForm = ({ date }) => {
   const { todayData, refetch } = useFormData(date);
@@ -83,9 +82,6 @@ export const TrackerForm = ({ date }) => {
           <CheckboxInput name="porn"/>
         </Fieldset>
       </div>
-      <Button onClick={() => window.location.reload()}>
-        Refresh Page
-      </Button>
     </div>
   );
 };

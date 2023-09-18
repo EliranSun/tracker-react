@@ -8,18 +8,23 @@ import { DateTime } from "luxon";
 const extractTimeBasedData = (data = [], date, isDayView = false) => {
   return data
     .map((item) => {
-      const hour = item?.split(":")[0];
-      const minute = nearestFifteen(item?.split(":")[1]);
+      try {
+        const hour = item?.split(":")[0];
+        const minute = nearestFifteen(item?.split(":")[1]);
 
-      if (hour && minute) {
-        if (isDayView) {
-          return { y: 5, x: `${hour}:00` };
+        if (hour && minute) {
+          if (isDayView) {
+            return { y: 0, x: `${hour}:00` };
+          }
+
+          return { y: hour ? `${hour}:${minute}` : null, x: date };
         }
 
-        return { y: hour ? `${hour}:${minute}` : null, x: date };
+        return null;
+      } catch (error) {
+        console.log(date, item, error);
+        return null;
       }
-
-      return null;
     })
     .filter(Boolean);
 };
@@ -54,7 +59,7 @@ const extractSleepHoursData = (data = [], isDayView = false) => {
   const previousDaySleep = [];
 
   if (isDayView) {
-    return [{ x: ['07:00', `${wokeUpHour}:00`], y: 0 }];
+    return [{ x: ['06:00', `${wokeUpHour}:00`], y: 0 }];
   }
 
   if (data.wentToBed && data.wokeUp) {
@@ -108,15 +113,34 @@ export const useChartData = ({ date }) => {
           formattedData[key] = [];
         });
         formattedData.sleep = [];
-
+        let averages = {};
         data
+          .filter((item) => {
+            const split = item.date.split("-");
+            const year = split[0];
+            const month = split[1];
+            const day = split[2];
+            const itemDate = DateTime.fromObject({ year, month, day });
+            // itemDate > today - 7 days
+            return itemDate > DateTime.local().minus({ days: 7 });
+          })
           .map((item) => ({ ...item, timestamp: new Date(item.date) }))
           .sort((a, b) => a.timestamp - b.timestamp)
           .forEach((row) => {
             const rowDate = row.date;
             const x = isDayView ? "12:00" : row.date;
 
-            formattedData.energy.push(...extractValueBasedData(row.energy, x, isDayView));
+            row.energy.forEach((energy) => {
+              const energyLevel = Object.values(energy)[0];
+              averages[rowDate] = {
+                sum: (averages[rowDate]?.sum || 0) + Number(energyLevel),
+                count: (averages[rowDate]?.count || 0) + 1,
+              };
+            });
+
+            if (isDayView) {
+              formattedData.energy.push(...extractValueBasedData(row.energy, rowDate, true));
+            }
             formattedData.coffee.push(...extractTimeBasedData(row.coffee, rowDate, isDayView));
             formattedData.eating.push(...extractTimeBasedData(row.eating, rowDate, isDayView));
             formattedData.sleep.push(...extractSleepHoursData(row, isDayView));
@@ -134,8 +158,15 @@ export const useChartData = ({ date }) => {
             row.nap && formattedData.nap.push({ y: ["15:00", napOverTime], x });
           });
 
+        if (!isDayView) {
+          Object.entries(averages).forEach(([date, item]) => {
+            const average = item.sum / item.count;
+            formattedData.energy.push({ x: date, y: average });
+          });
+        }
+
         const AwakeHours = Array.from({ length: 18 }).map((_, i) => {
-          const value = i + 7;
+          const value = i + 6;
           const hour = value < 10 ? `0${value}` : value;
           return `${hour}:00`;
         });

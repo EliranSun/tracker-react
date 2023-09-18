@@ -49,7 +49,7 @@ export const TrackingChart = ({ date }) => {
       <Line
         data={data}
         width={window.innerWidth}
-        height={window.innerHeight/2}
+        height={window.innerHeight / 2}
         options={{
           interaction: {
             mode: "index",
@@ -110,8 +110,12 @@ export const TrackingChart = ({ date }) => {
 
       <Button className="mx-2 my-4" onClick={() => setIsDayView(true)}>DAY</Button>
       <Button className="mx-2 my-4" onClick={() => setIsDayView(false)}>WEEK</Button>
-      <Button onClick={() => window.location.reload()}>
-        Refresh Page
+      <Button onClick={() => {
+        // dummy state to force useEffect in hook to run
+        setIsDayView(!isDayView);
+        setIsDayView(!isDayView);
+      }}>
+        Refresh Chart
       </Button>
     </div>
   );

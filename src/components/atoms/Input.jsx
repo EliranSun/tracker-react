@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { noop, snakeCase } from "lodash";
 import { SubmitButton } from "./SubmitButton";
 import { getTime } from "../../utils/time";
@@ -16,6 +16,18 @@ export const Input = ({
   showValue = false,
 }) => {
   const snakedName = snakeCase(name);
+  const currentValue = useMemo(() => {
+    if (value) return value;
+    if (!values) return "";
+
+    if (isTimeBasedValue) {
+      return values.map(item => {
+        return Object.values(item)[0];
+      }).at(-1);
+    }
+
+    return values.at(-1);
+  }, [isTimeBasedValue, value, values]);
   const [innerValue, setInnerValue] = useState("");
   const submitData = useMemo(() => {
     if (isTimeBasedValue) {
@@ -31,20 +43,13 @@ export const Input = ({
     }
 
     return innerValue;
-  }, [innerValue, type, values]);
-  const currentValue = useMemo(() => {
-    if (value) return value;
-    if (!values) return "";
+  }, [innerValue, isTimeBasedValue, type, values]);
 
-    if (isTimeBasedValue) {
-      return values.map(item => {
-        const key = Object.keys(item)[0];
-        return Object.values(item)[0];
-      }).at(-1);
+  useEffect(() => {
+    if (type === 'range') {
+      setInnerValue(currentValue);
     }
-
-    return values.at(-1);
-  }, [value, values]);
+  }, [currentValue, type]);
 
   return (
     <div className="w-full items-center flex text-left gap-4 border border-white">
@@ -60,7 +65,7 @@ export const Input = ({
         </label>
         <input
           type={type}
-          className="text-black max-w-[80px]"
+          className="text-black max-w-[200px]"
           id={snakedName}
           name={snakedName}
           value={innerValue}
@@ -76,13 +81,15 @@ export const Input = ({
           }}
         />
       </div>
-      <SubmitButton
-        date={date}
-        name={name}
-        isDisabled={innerValue === "" || innerValue == value}
-        data={submitData}
-        onSuccess={() => setTimeout(refetch, 2500)}
-      />
+      <div className="px-4">
+        <SubmitButton
+          date={date}
+          name={name}
+          isDisabled={innerValue === "" || innerValue == value}
+          data={submitData}
+          onSuccess={() => setTimeout(refetch, 2500)}
+        />
+      </div>
     </div>
   );
 };
