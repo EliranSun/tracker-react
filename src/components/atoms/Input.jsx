@@ -12,7 +12,8 @@ export const Input = ({
   min,
   max,
   refetch = noop,
-  isTimeBasedValue = false
+  isTimeBasedValue = false,
+  showValue = false,
 }) => {
   const snakedName = snakeCase(name);
   const [innerValue, setInnerValue] = useState("");
@@ -53,6 +54,7 @@ export const Input = ({
       <div className="flex justify-between w-full items-center">
         <label htmlFor={snakedName}>
           {name.replaceAll("_", " ").toUpperCase()}
+          {showValue ? ` - ${innerValue}` : ""}
         </label>
         <input
           type={type}
