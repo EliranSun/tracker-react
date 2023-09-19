@@ -70,7 +70,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
           <NumberInput name="social"/>
           <NumberInput name="creative"/>
           <NumberInput name="outside"/>
-          <NumberInput name="youtube"/>
+          <NumberInput name="media"/>
         </Fieldset>
         <Fieldset legend="Well Being">
           <TimeBasedInput values={data.shower} name="shower" refetch={refetch} date={date}/>

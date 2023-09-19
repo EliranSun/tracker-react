@@ -14,7 +14,7 @@ const extractTimeBasedData = (data = [], date, isDayView = false) => {
 
         if (hour && minute) {
           if (isDayView) {
-            return { y: 5, x: `${hour}:00` };
+            return { y: 10, x: `${hour}:00` };
           }
 
           return { y: hour ? `${hour}:${minute}` : null, x: date };
