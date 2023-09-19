@@ -5,6 +5,7 @@ import { getTrackingData } from "../utils/firebase";
 import { getLocaleDate } from "../utils/date";
 import { DateTime } from "luxon";
 
+let timeBasedCounterY = 11;
 const extractTimeBasedData = (data = [], date, isDayView = false) => {
   return data
     .map((item) => {
@@ -14,7 +15,9 @@ const extractTimeBasedData = (data = [], date, isDayView = false) => {
 
         if (hour && minute) {
           if (isDayView) {
-            return { y: 10, x: `${hour}:00` };
+            if (timeBasedCounterY < 5) timeBasedCounterY = 11;
+            timeBasedCounterY--;
+            return { y: timeBasedCounterY, x: `${hour}:00` };
           }
 
           return { y: hour ? `${hour}:${minute}` : null, x: date };
