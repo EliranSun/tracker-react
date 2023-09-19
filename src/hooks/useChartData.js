@@ -105,7 +105,7 @@ export const useChartData = ({ date }) => {
   });
   const fetchTrackingData = useCallback(() => {
     setIsLoading(true);
-    getTrackingData(date)
+    getTrackingData()
       .then((data) => {
         if (!data) {
           setError(new Error("No data found"));
@@ -119,6 +119,7 @@ export const useChartData = ({ date }) => {
         formattedData.sleep = [];
         let averages = {};
         data
+          .filter((item) => item.date === date)
           .filter((item) => {
             const split = item.date.split("-");
             const year = split[0];
@@ -130,7 +131,7 @@ export const useChartData = ({ date }) => {
           })
           .map((item) => ({ ...item, timestamp: new Date(item.date) }))
           .sort((a, b) => a.timestamp - b.timestamp)
-          .forEach((row, index) => {
+          .forEach((row) => {
             const rowDate = row.date;
             const x = isDayView ? "12:00" : row.date;
 
@@ -151,7 +152,15 @@ export const useChartData = ({ date }) => {
             formattedData.shower.push(...extractTimeBasedData(row.shower, rowDate, isDayView));
             formattedData.water.push(...extractTimeBasedData(row.water, rowDate, isDayView));
 
-            formattedData.sleep.push(...extractSleepHoursData(row, data[index + 1], isDayView));
+
+            const year = rowDate.split("-")[0];
+            const month = rowDate.split("-")[1];
+            const day = rowDate.split("-")[2];
+            const nextDayDate = DateTime.fromObject({ year, month, day }).plus({ days: 1 }).toFormat("yyyy-MM-dd");
+            const nextDayData = data.find((item) => {
+              return item.date === nextDayDate;
+            });
+            formattedData.sleep.push(...extractSleepHoursData(row, nextDayData, isDayView));
 
             formattedData.creative.push({ y: row.creative, x });
             formattedData.social.push({ y: row.social, x });
@@ -186,7 +195,7 @@ export const useChartData = ({ date }) => {
             return getLocaleDate(day);
           })
           .reverse();
-        
+
         setData({
           labels: isDayView ? AwakeHours : labels,
           dayLabels: labels.map((item) => DateTime.fromObject({

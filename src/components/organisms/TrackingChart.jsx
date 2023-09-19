@@ -106,7 +106,7 @@ export const TrackingChart = ({ date }) => {
                   }
 
                   let label = "Sleep:";
-                  const data = context.raw?.y;
+                  const data = isDayView ? context.raw?.x : context.raw?.y;
                   if (data.length === 2) {
                     label += `${data[0]} - ${data[1]}`;
                   }
