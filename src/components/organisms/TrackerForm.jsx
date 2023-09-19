@@ -77,7 +77,8 @@ export const TrackerForm = ({ date, data, refetch }) => {
           <CheckboxInput name="work_late"/>
           <CheckboxInput name="workout"/>
           <CheckboxInput name="sick"/>
-          <CheckboxInput name="porn"/>
+          <CheckboxInput name="boohoo"/>
+          <CheckboxInput name="whoohoo"/>
         </Fieldset>
       </div>
     </div>
