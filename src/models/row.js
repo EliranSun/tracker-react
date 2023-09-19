@@ -25,6 +25,7 @@ class Row {
     youtube,
     outside,
     nap,
+    media
   } = {}) {
     this.date = date;
     this.energy = energy || [];
@@ -37,6 +38,7 @@ class Row {
     this.outside = outside || 0;
     this.nap = nap || 0;
     this.family = family || 0;
+    this.media = media || 0;
     
     // consumption
     this.water = water || [];
