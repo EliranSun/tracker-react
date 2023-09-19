@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Row from "../models/row";
 import { nearestFifteen } from "../utils/time";
 import { getTrackingData } from "../utils/firebase";
@@ -61,10 +61,10 @@ const extractSleepHoursData = (data = [], nextDayData, isDayView = false) => {
   if (isDayView) {
     const foo = [{ x: ['06:00', `${wokeUpHour}:00`], y: 0 }];
     if (nextDayData && nextDayData.wentToBed) {
-        const nextWentToBedHour = Number(nextDayData.wentToBed?.split(":")[0]);
-        if (nextWentToBedHour > 6) foo.push({ x: [`${nextWentToBedHour}:00`, "0:00"], y: 0 });
-     }
-    
+      const nextWentToBedHour = Number(nextDayData.wentToBed?.split(":")[0]);
+      if (nextWentToBedHour > 6) foo.push({ x: [`${nextWentToBedHour}:00`, "0:00"], y: 0 });
+    }
+
     return foo;
   }
 
@@ -96,16 +96,14 @@ const extractSleepHoursData = (data = [], nextDayData, isDayView = false) => {
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 export const useChartData = ({ date }) => {
+  const isDayView = Boolean(date);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState({
     labels: [],
     datasets: [],
   });
-
-  const isDayView = Boolean(date);
-
-  useEffect(() => {
+  const fetchTrackingData = useCallback(() => {
     setIsLoading(true);
     getTrackingData(date)
       .then((data) => {
@@ -188,9 +186,7 @@ export const useChartData = ({ date }) => {
             return getLocaleDate(day);
           })
           .reverse();
-
-        const labels2 = formattedData.energy.map((item) => item.x);
-
+        
         setData({
           labels: isDayView ? AwakeHours : labels,
           dayLabels: labels.map((item) => DateTime.fromObject({
@@ -348,10 +344,17 @@ export const useChartData = ({ date }) => {
       });
   }, [date, isDayView]);
 
+  useEffect(() => {
+    fetchTrackingData();
+  }, [date, fetchTrackingData, isDayView]);
+
   return {
-    error,
-    isLoading,
-    date,
-    ...data,
+    data: {
+      error,
+      isLoading,
+      date,
+      ...data,
+    },
+    refetch: fetchTrackingData
   };
 };

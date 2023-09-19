@@ -40,9 +40,8 @@ const TwentyFourHoursFifteenMinutesIntervals = Array.from(
 
 export const TrackingChart = ({ date }) => {
   const [isDayView, setIsDayView] = useState(true);
-  const data = useChartData({
-    date: isDayView && getLocaleDate(date ? new Date(date) : undefined),
-  });
+  const chartDate = isDayView && getLocaleDate(date ? new Date(date) : undefined);
+  const { data, refetch } = useChartData({ date: chartDate });
 
   let additionalOptions = {};
   if (!isDayView) {
@@ -125,11 +124,7 @@ export const TrackingChart = ({ date }) => {
       <div>
         <Button className="mx-2 my-4" onClick={() => setIsDayView(true)}>DAY</Button>
         <Button className="mx-2 my-4" onClick={() => setIsDayView(false)}>WEEK</Button>
-        <Button onClick={() => {
-          // dummy state to force useEffect in hook to run
-          setIsDayView(false);
-          setIsDayView(true);
-        }}>
+        <Button onClick={refetch}>
           Refresh Chart
         </Button>
       </div>
