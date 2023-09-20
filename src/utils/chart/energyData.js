@@ -1,14 +1,22 @@
 import { DatasetTypes } from "../../constants";
 
-export const getEnergyData = (data = [], isDayView = true) => {
+import { roundToNearestQuarterHour } from "../time";
+
+export const getEnergyData = (data = [], isDayView = true, date) => {
   const averages = {};
   const energyData = [];
   const averageData = [];
   
-  data.forEach(entry => {
+  data.filter(entry => {
+    if (isDayView) {
+      return entry.date === date;
+    }
+    
+    return true;
+  }).forEach(entry => {
     entry.energy.forEach((item) => {
       const value = Object.values(item)[0];
-      const time = Object.keys(item)[0];
+      const time = roundToNearestQuarterHour(Object.keys(item)[0]);
       
       averages[entry.date] = {
         sum: (averages[entry.date]?.sum || 0) + Number(value),

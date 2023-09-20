@@ -52,7 +52,7 @@ function App() {
         </Button>
         <Button onClick={() => window.location.reload()}>Refresh page</Button>
       </div>
-      <section className="flex flex-col md:flex-row md:flex-row gap-4">
+      <section className="flex flex-col md:flex-row md:flex-row gap-4 justify-center">
         <TrackingChart date={date}/>
         <div className="flex flex-col gap-4">
           <TrackerQuickActions date={date} userName={userName} data={todayData}/>
