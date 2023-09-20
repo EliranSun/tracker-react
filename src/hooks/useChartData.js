@@ -126,7 +126,10 @@ export const useChartData = ({ date }) => {
         formattedData.sleep = [];
         let averages = {};
         
-        setEntries(entries);
+        setEntries(entries.filter((item) => {
+          if (!isDayView) return true;
+          return item.date === date;
+        }));
         
         entries
           .filter((item) => item.date === date)
