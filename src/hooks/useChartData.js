@@ -12,17 +12,17 @@ const extractTimeBasedData = (data = [], date, isDayView = false) => {
       try {
         const hour = item?.split(":")[0];
         const minute = nearestFifteen(item?.split(":")[1]);
-
+        
         if (hour && minute) {
           if (isDayView) {
             if (timeBasedCounterY < 5) timeBasedCounterY = 11;
             timeBasedCounterY--;
             return { y: timeBasedCounterY, x: `${hour}:00` };
           }
-
+          
           return { y: hour ? `${hour}:${minute}` : null, x: date };
         }
-
+        
         return null;
       } catch (error) {
         console.log(date, item, error);
@@ -39,14 +39,14 @@ const extractValueBasedData = (data = [], date, isDayView) => {
       const value = Object.values(item)[0];
       const hour = key?.split(":")[0];
       const minute = key?.split(":")[1];
-
+      
       if (value && key) {
         let dt = DateTime.fromObject({ hour, minute });
         const roundedDt = dt.startOf("hour");
-
+        
         return { y: value, x: isDayView ? roundedDt.toFormat("HH:mm") : date };
       }
-
+      
       return null;
     })
     .filter(Boolean);
@@ -57,42 +57,45 @@ const extractSleepHoursData = (data = [], nextDayData, isDayView = false) => {
   const wentToBedMinute = nearestFifteen(data.wentToBed?.split(":")[1]);
   const wokeUpHour = data.wokeUp?.split(":")[0];
   const wokeUpMinute = nearestFifteen(data.wokeUp?.split(":")[1]);
-
+  
   const thisDaySleep = [];
   const previousDaySleep = [];
-
+  
   if (isDayView) {
-    const foo = [{ x: ['06:00', `${wokeUpHour}:00`], y: 0 }];
+    const foo = [{
+      x: ['06:00', `${wokeUpHour}:00`],
+      y: 10
+    }];
     if (nextDayData && nextDayData.wentToBed) {
       const nextWentToBedHour = Number(nextDayData.wentToBed?.split(":")[0]);
       if (nextWentToBedHour > 6) foo.push({ x: [`${nextWentToBedHour}:00`, "0:00"], y: 0 });
     }
-
+    
     return foo;
   }
-
+  
   if (data.wentToBed && data.wokeUp) {
     if (Number(wentToBedHour) >= 0 && Number(wentToBedHour) <= 12) {
       thisDaySleep.push(
         `${wentToBedHour}:${wentToBedMinute}`,
         `${wokeUpHour}:${wokeUpMinute}`
       );
-
+      
       return [{ x: data.date, y: thisDaySleep }];
     }
-
+    
     previousDaySleep.push(`${wentToBedHour}:${wentToBedMinute}`, "23:59");
     thisDaySleep.push("0:00", `${wokeUpHour}:${wokeUpMinute}`);
-
+    
     const date = new Date(new Date(data.date).getTime() - 24 * 60 * 60 * 1000);
     const previousDay = getLocaleDate(date);
-
+    
     return [
       { x: previousDay, y: previousDaySleep },
       { x: data.date, y: thisDaySleep },
     ];
   }
-
+  
   return [];
 };
 
@@ -114,7 +117,7 @@ export const useChartData = ({ date }) => {
           setError(new Error("No data found"));
           return;
         }
-
+        
         const formattedData = {};
         Object.keys(new Row()).forEach((key) => {
           formattedData[key] = [];
@@ -137,7 +140,7 @@ export const useChartData = ({ date }) => {
           .forEach((row) => {
             const rowDate = row.date;
             const x = isDayView ? "12:00" : row.date;
-
+            
             row.energy.forEach((energy) => {
               const energyLevel = Object.values(energy)[0];
               averages[rowDate] = {
@@ -145,7 +148,7 @@ export const useChartData = ({ date }) => {
                 count: (averages[rowDate]?.count || 0) + 1,
               };
             });
-
+            
             if (isDayView) {
               formattedData.energy.push(...extractValueBasedData(row.energy, rowDate, true));
             }
@@ -154,8 +157,8 @@ export const useChartData = ({ date }) => {
             formattedData.sugar.push(...extractTimeBasedData(row.sugar, rowDate, isDayView));
             formattedData.shower.push(...extractTimeBasedData(row.shower, rowDate, isDayView));
             formattedData.water.push(...extractTimeBasedData(row.water, rowDate, isDayView));
-
-
+            
+            
             const year = rowDate.split("-")[0];
             const month = rowDate.split("-")[1];
             const day = rowDate.split("-")[2];
@@ -164,12 +167,12 @@ export const useChartData = ({ date }) => {
               return item.date === nextDayDate;
             });
             formattedData.sleep.push(...extractSleepHoursData(row, nextDayData, isDayView));
-
+            
             formattedData.creative.push({ y: row.creative, x });
             formattedData.social.push({ y: row.social, x });
             formattedData.youtube.push({ y: row.youtube, x });
             formattedData.productivity.push({ y: row.productivity, x });
-
+            
             const napOverTime = DateTime.fromObject({ hour: 15, minute: 0 })
               .plus({ minutes: row.nap })
               .toFormat("HH:mm");
@@ -177,20 +180,20 @@ export const useChartData = ({ date }) => {
             row.snooze && formattedData.snooze.push({ y: "7:00", x });
             row.nap && formattedData.nap.push({ y: ["15:00", napOverTime], x });
           });
-
+        
         if (!isDayView) {
           Object.entries(averages).forEach(([date, item]) => {
             const average = item.sum / item.count;
             formattedData.energy.push({ x: date, y: average });
           });
         }
-
+        
         const AwakeHours = Array.from({ length: 18 }).map((_, i) => {
           const value = i + 6;
           const hour = value < 10 ? `0${value}` : value;
           return `${hour}:00`;
         });
-
+        
         const labels = Array.from({ length: 7 })
           .map((_, i) => {
             const today = new Date().getTime();
@@ -198,7 +201,7 @@ export const useChartData = ({ date }) => {
             return getLocaleDate(day);
           })
           .reverse();
-
+        
         setData({
           labels: isDayView ? AwakeHours : labels,
           dayLabels: labels.map((item) => DateTime.fromObject({
@@ -219,9 +222,10 @@ export const useChartData = ({ date }) => {
               backgroundColor: "rgba(235,220,53,0.5)",
             },
             {
-              type: "scatter",
+              type: "bar",
               label: "Coffee",
               stacked: true,
+              stack: true,
               data: formattedData.coffee,
               borderWidth: 3,
               yAxisID: "y",
@@ -230,9 +234,10 @@ export const useChartData = ({ date }) => {
               hidden: false,
             },
             {
-              type: "scatter",
+              type: "bar",
               label: "Sugar",
               stacked: true,
+              stack: true,
               data: formattedData.sugar,
               borderWidth: 3,
               yAxisID: "y",
@@ -241,8 +246,9 @@ export const useChartData = ({ date }) => {
               hidden: false,
             },
             {
-              type: "scatter",
+              type: "bar",
               label: "Shower",
+              stack: true,
               data: formattedData.shower,
               borderWidth: 3,
               stacked: true,
@@ -252,8 +258,9 @@ export const useChartData = ({ date }) => {
               hidden: false,
             },
             {
-              type: "scatter",
+              type: "bar",
               label: "Eating",
+              stack: true,
               stacked: true,
               data: formattedData.eating,
               borderWidth: 3,
@@ -355,11 +362,11 @@ export const useChartData = ({ date }) => {
         setIsLoading(false);
       });
   }, [date, isDayView]);
-
+  
   useEffect(() => {
     fetchTrackingData();
   }, [date, fetchTrackingData, isDayView]);
-
+  
   return {
     data: {
       error,
