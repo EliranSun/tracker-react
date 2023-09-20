@@ -8,9 +8,8 @@ export const getSleepLabels = (data = []) => {
 };
 
 const roundToNearestQuarterHour = (timeStr) => {
-  let dt = DateTime.fromFormat(timeStr, "H:mm");
-  let minutes = dt.minute;
-  let roundedMinutes = Math.floor(minutes / 15) * 15;
+  const dt = DateTime.fromFormat(timeStr, "H:mm");
+  const roundedMinutes = Math.floor(dt.minute / 15) * 15;
   return dt.set({ minute: roundedMinutes }).toFormat("H:mm");
 };
 
