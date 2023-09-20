@@ -17,6 +17,7 @@ class Row {
     alcohol,
     keto,
     went_to_bed,
+    is_went_to_bed_next_day,
     woke_up,
     woke_up_mid_night,
     work_late,
@@ -49,6 +50,7 @@ class Row {
     
     // sleep
     this.wentToBed = went_to_bed || "";
+    this.isWentToBedNextDay = is_went_to_bed_next_day || false;
     this.wokeUp = woke_up || "";
     this.snooze = snooze || false;
     this.wokeUpMidNight = woke_up_mid_night || false;
