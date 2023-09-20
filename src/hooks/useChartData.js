@@ -6,7 +6,7 @@ import { getLocaleDate } from "../utils/date";
 import { DateTime } from "luxon";
 
 let timeBasedCounterY = 11;
-const extractTimeBasedData = (data = [], date, isDayView = false) => {
+export const extractTimeBasedData = (data = [], date, isDayView = false) => {
   return data
     .map((item) => {
       try {
@@ -32,7 +32,7 @@ const extractTimeBasedData = (data = [], date, isDayView = false) => {
     .filter(Boolean);
 };
 
-const extractValueBasedData = (data = [], date, isDayView) => {
+export const extractValueBasedData = (data = [], date, isDayView) => {
   return data
     .map((item) => {
       const key = Object.keys(item)[0];
@@ -52,7 +52,7 @@ const extractValueBasedData = (data = [], date, isDayView) => {
     .filter(Boolean);
 };
 
-const extractSleepHoursData = (data = [], nextDayData, isDayView = false) => {
+export const extractSleepHoursData = (data = [], nextDayData, isDayView = false) => {
   const wentToBedHour = Number(data.wentToBed?.split(":")[0]);
   const wentToBedMinute = nearestFifteen(data.wentToBed?.split(":")[1]);
   const wokeUpHour = data.wokeUp?.split(":")[0];
@@ -105,6 +105,7 @@ export const useChartData = ({ date }) => {
   const isDayView = Boolean(date);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [entries, setEntries] = useState([]);
   const [data, setData] = useState({
     labels: [],
     datasets: [],
@@ -112,8 +113,8 @@ export const useChartData = ({ date }) => {
   const fetchTrackingData = useCallback(() => {
     setIsLoading(true);
     getTrackingData()
-      .then((data) => {
-        if (!data) {
+      .then((entries) => {
+        if (!entries) {
           setError(new Error("No data found"));
           return;
         }
@@ -124,7 +125,10 @@ export const useChartData = ({ date }) => {
         });
         formattedData.sleep = [];
         let averages = {};
-        data
+        
+        setEntries(entries);
+        
+        entries
           .filter((item) => item.date === date)
           .filter((item) => {
             const split = item.date.split("-");
@@ -361,7 +365,7 @@ export const useChartData = ({ date }) => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [date, isDayView]);
+  }, [data, date, isDayView]);
   
   useEffect(() => {
     fetchTrackingData();
@@ -372,7 +376,10 @@ export const useChartData = ({ date }) => {
       error,
       isLoading,
       date,
-      ...data,
+      entries,
+      labels: data.labels,
+      datasets: data.datasets,
+      dayLabels: data.dayLabels,
     },
     refetch: fetchTrackingData
   };

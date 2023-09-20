@@ -16,7 +16,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-
+  
   const CheckboxInput = ({ name }) => {
     return (
       <Input
@@ -28,7 +28,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-
+  
   const NumberInput = ({ name }) => {
     return (
       <Input
@@ -40,7 +40,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-
+  
   return (
     <div className="w-full p-4 border border-white">
       <EnergyInput
@@ -49,8 +49,8 @@ export const TrackerForm = ({ date, data, refetch }) => {
         values={data.energy}/>
       <div className="w-full">
         <Fieldset legend="Sleep">
-          <TimeInput name="went_to_bed"/>
           <TimeInput name="woke_up"/>
+          <TimeInput name="went_to_bed"/> (tonight)
           <CheckboxInput name="snooze"/>
           <CheckboxInput name="woke_up_mid_night"/>
           <NumberInput name="nap"/>

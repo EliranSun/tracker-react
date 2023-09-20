@@ -16,6 +16,9 @@ import { useChartData } from "../../hooks/useChartData";
 import { useState } from "react";
 import { getLocaleDate } from "../../utils/date";
 import { Button } from "../atoms/Button";
+import { getSleepDataset, getSleepLabels } from "../../utils/chart/sleepData";
+import { DateTime } from "luxon";
+import { getEnergyData } from "../../utils/chart/energyData";
 
 ChartJS.register(
   LineElement,
@@ -30,37 +33,49 @@ ChartJS.register(
   BarController
 );
 
-const TwentyFourHoursFifteenMinutesIntervals = Array.from(
-  Array(24 * 4).keys()
-).map((i) => {
-  const hour = Math.floor(i / 4);
-  const minute = (i % 4) * 15;
-  return `${hour}:${minute === 0 ? "00" : minute}`;
-});
+const getTimeWithMinutesInterval = (interval = 15) => {
+  const gap = 60 / interval;
+  const hours = Array.from({ length: 24 }).map((_, i) => {
+    return DateTime.fromObject({ hour: 0 }).plus({ hour: i }).toFormat("H");
+  });
+  
+  const minutes = Array.from({ length: gap }).map((_, i) => {
+    return DateTime.fromObject({ minute: 0 }).plus({ minute: i * interval }).toFormat(":mm");
+  });
+  // .concat("0:00");
+  return hours.map(hour => minutes.map(minute => hour + minute)).flat()
+}
 
 export const TrackingChart = ({ date }) => {
-  const [isDayView, setIsDayView] = useState(true);
+  const [isDayView, setIsDayView] = useState(false);
   const chartDate = isDayView && getLocaleDate(date ? new Date(date) : undefined);
   const { data, refetch } = useChartData({ date: chartDate });
-
-  let additionalOptions = {};
-  if (!isDayView) {
-    additionalOptions = {
-      x1: {
-        beginAtZero: true,
-        labels: data.dayLabels,
-        hidden: true
-      },
-    }
-  }
-
+  
+  // let additionalOptions = {};
+  // if (!isDayView) {
+  //   additionalOptions = {
+  //     x1: {
+  //       beginAtZero: true,
+  //       labels: data.dayLabels,
+  //       hidden: true
+  //     },
+  //   }
+  // }
+  
+  const lineData = {
+    labels: getSleepLabels(data.entries, isDayView),
+    datasets: [
+      getEnergyData(data.entries, isDayView),
+      getSleepDataset(data.entries, isDayView),
+    ]
+  };
+  
+  const timeLabels = getTimeWithMinutesInterval(15);
+  
   return (
     <div className="md:w-2/3">
       <Line
-        data={{
-          labels: data.labels,
-          datasets: data.datasets,
-        }}
+        data={lineData}
         width={window.innerWidth}
         height={window.innerHeight / 2}
         options={{
@@ -70,7 +85,7 @@ export const TrackingChart = ({ date }) => {
           },
           cubicInterpolationMode: "monotone",
           scales: {
-            ...additionalOptions,
+            // ...additionalOptions,
             y: {
               beginAtZero: false,
               stacked: false,
@@ -79,7 +94,7 @@ export const TrackingChart = ({ date }) => {
               beginAtZero: false,
               adapter: "luxon",
               type: "category",
-              labels: TwentyFourHoursFifteenMinutesIntervals,
+              labels: timeLabels,
               stack: true,
               time: {
                 unit: "hour",
@@ -104,17 +119,17 @@ export const TrackingChart = ({ date }) => {
                   if (context.dataset.label.toLowerCase() !== "sleep") {
                     return `${context.dataset.label}: ${context.formattedValue}`;
                   }
-
+                  
                   let label = "Sleep:";
                   const data = isDayView ? context.raw?.x : context.raw?.y;
                   if (data.length === 2) {
                     label += `${data[0]} - ${data[1]}`;
                   }
-
+                  
                   if (data.length === 4) {
                     label += `${data[2]} - ${data[1]}`;
                   }
-
+                  
                   return label;
                 },
               },
