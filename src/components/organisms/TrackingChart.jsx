@@ -16,6 +16,12 @@ import { useChartData } from "../../hooks/useChartData";
 import { useState } from "react";
 import { getLocaleDate } from "../../utils/date";
 import { Button } from "../atoms/Button";
+import { getSleepDataset, getSleepLabels } from "../../utils/chart/sleepData";
+import { getEnergyData } from "../../utils/chart/energyData";
+import { getSnoozeDataset } from "../../utils/chart/snoozeData";
+import { getOptions } from "../../utils/chart/options";
+import { getTimeWithMinutesInterval } from "../../utils/time";
+import { getCoffeeData } from "../../utils/chart/coffeeData";
 
 ChartJS.register(
   LineElement,
@@ -30,104 +36,44 @@ ChartJS.register(
   BarController
 );
 
-const TwentyFourHoursFifteenMinutesIntervals = Array.from(
-  Array(24 * 4).keys()
-).map((i) => {
-  const hour = Math.floor(i / 4);
-  const minute = (i % 4) * 15;
-  return `${hour}:${minute === 0 ? "00" : minute}`;
-});
-
 export const TrackingChart = ({ date }) => {
   const [isDayView, setIsDayView] = useState(true);
+  const [isTotalSleepView, setIsTotalSleepView] = useState(true);
   const chartDate = isDayView && getLocaleDate(date ? new Date(date) : undefined);
   const { data, refetch } = useChartData({ date: chartDate });
-
-  let additionalOptions = {};
-  if (!isDayView) {
-    additionalOptions = {
-      x1: {
-        beginAtZero: true,
-        labels: data.dayLabels,
-        hidden: true
-      },
-    }
-  }
-
+  const timeLabels = getTimeWithMinutesInterval(15);
+  const lineData = {
+    labels: isDayView ? timeLabels : getSleepLabels(data.entries),
+    datasets: [
+      getEnergyData(data.entries, isDayView, date),
+      getSleepDataset(data.entries, isDayView ? date : '', !isDayView && isTotalSleepView),
+      getSnoozeDataset(data.entries, isDayView ? date : ''),
+      getCoffeeData(data.entries, isDayView ? date : '', !isDayView && isTotalSleepView)
+    ]
+  };
+  
   return (
-    <div className="md:w-2/3">
-      <Line
-        data={{
-          labels: data.labels,
-          datasets: data.datasets,
-        }}
-        width={window.innerWidth}
-        height={window.innerHeight / 2}
-        options={{
-          interaction: {
-            mode: "index",
-            intersect: false,
-          },
-          cubicInterpolationMode: "monotone",
-          scales: {
-            ...additionalOptions,
-            y: {
-              beginAtZero: false,
-              stacked: false,
-            },
-            y1: {
-              beginAtZero: false,
-              adapter: "luxon",
-              type: "category",
-              labels: TwentyFourHoursFifteenMinutesIntervals,
-              stack: true,
-              time: {
-                unit: "hour",
-              },
-              display: true,
-              position: "right",
-              grid: {
-                drawOnChartArea: false, // only want the grid lines for one axis to show up
-              },
-            },
-            y2: {
-              beginAtZero: false,
-            },
-          },
-          legend: {
-            hidden: true
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  if (context.dataset.label.toLowerCase() !== "sleep") {
-                    return `${context.dataset.label}: ${context.formattedValue}`;
-                  }
-
-                  let label = "Sleep:";
-                  const data = isDayView ? context.raw?.x : context.raw?.y;
-                  if (data.length === 2) {
-                    label += `${data[0]} - ${data[1]}`;
-                  }
-
-                  if (data.length === 4) {
-                    label += `${data[2]} - ${data[1]}`;
-                  }
-
-                  return label;
-                },
-              },
-            },
-          },
-        }}/>
-      <div>
-        <Button className="mx-2 my-4" onClick={() => setIsDayView(true)}>DAY</Button>
-        <Button className="mx-2 my-4" onClick={() => setIsDayView(false)}>WEEK</Button>
-        <Button onClick={refetch}>
-          Refresh Chart
-        </Button>
+    <div className="md:w-1/2">
+      <div className="flex items-start gap-4">
+        <Button onClick={refetch}>Refresh Charts</Button>
+        <Button onClick={() => setIsDayView(true)}>HOUR</Button>
+        <Button onClick={() => setIsDayView(false)}>DAY</Button>
+        <div className="flex items-center">
+          <input
+            id="totalSleepView"
+            type="checkbox"
+            checked={isTotalSleepView}
+            onChange={() => {
+              setIsTotalSleepView(!isTotalSleepView);
+            }}/>
+          <label className="mx-2 my-4" htmlFor="totalSleepView">Stack data view</label>
+        </div>
       </div>
+      <Line
+        data={lineData}
+        width={window.innerWidth * 0.8}
+        height={window.innerHeight / 2}
+        options={getOptions(isDayView, isTotalSleepView, timeLabels)}/>
     </div>
   );
 };
