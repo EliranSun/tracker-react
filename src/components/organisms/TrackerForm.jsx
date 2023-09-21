@@ -60,9 +60,9 @@ export const TrackerForm = ({ date, data, refetch }) => {
           <TimeBasedInput values={data.coffee} name="coffee" refetch={refetch} date={date}/>
           <TimeBasedInput values={data.water} name="water" refetch={refetch} date={date}/>
           <TimeBasedInput values={data.sugar} name="sugar" refetch={refetch} date={date}/>
-          <CheckboxInput name="alcohol"/>
+          <TimeBasedInput values={data.alcohol} name="alcohol" refetch={refetch} date={date}/>
+          <TimeBasedInput values={data.stuffed} name="stuffed" refetch={refetch} date={date}/>
           <CheckboxInput name="keto"/>
-          <CheckboxInput name="stuffed"/>
         </Fieldset>
         <Fieldset legend="Activities (Hours)">
           <NumberInput name="productivity"/>
@@ -75,10 +75,10 @@ export const TrackerForm = ({ date, data, refetch }) => {
         <Fieldset legend="Well Being">
           <TimeBasedInput values={data.shower} name="shower" refetch={refetch} date={date}/>
           <CheckboxInput name="work_late"/>
-          <CheckboxInput name="workout"/>
+          <TimeBasedInput values={data.workout} name="workout" refetch={refetch} date={date}/>
           <CheckboxInput name="sick"/>
-          <CheckboxInput name="boohoo"/>
-          <CheckboxInput name="whoohoo"/>
+          <TimeBasedInput values={data.boohoo} name="boohoo" refetch={refetch} date={date}/>
+          <TimeBasedInput values={data.whoohoo} name="whoohoo" refetch={refetch} date={date}/>
         </Fieldset>
       </div>
     </div>
