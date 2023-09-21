@@ -38,7 +38,7 @@ const getTimeWithMinutesInterval = (interval = 15) => {
   const hours = Array.from({ length: 24 }).map((_, i) => {
     return DateTime.fromObject({ hour: 0 }).plus({ hour: i }).toFormat("H");
   });
-  
+
   const minutes = Array.from({ length: gap }).map((_, i) => {
     return DateTime.fromObject({ minute: 0 }).plus({ minute: i * interval }).toFormat(":mm");
   });
@@ -47,10 +47,10 @@ const getTimeWithMinutesInterval = (interval = 15) => {
 }
 
 export const TrackingChart = ({ date }) => {
-  const [isDayView, setIsDayView] = useState(false);
+  const [isDayView, setIsDayView] = useState(true);
   const chartDate = isDayView && getLocaleDate(date ? new Date(date) : undefined);
   const { data, refetch } = useChartData({ date: chartDate });
-  
+
   // let additionalOptions = {};
   // if (!isDayView) {
   //   additionalOptions = {
@@ -61,17 +61,19 @@ export const TrackingChart = ({ date }) => {
   //     },
   //   }
   // }
-  
+  const timeLabels = getTimeWithMinutesInterval(15);
+
   const lineData = {
-    labels: getSleepLabels(data.entries, isDayView),
+    labels: isDayView ? timeLabels : getSleepLabels(data.entries, isDayView),
     datasets: [
       getEnergyData(data.entries, isDayView),
       getSleepDataset(data.entries, isDayView),
     ]
   };
-  
-  const timeLabels = getTimeWithMinutesInterval(15);
-  
+
+  console.log(lineData.datasets[1].data);
+
+
   return (
     <div className="md:w-2/3">
       <Line
@@ -99,7 +101,7 @@ export const TrackingChart = ({ date }) => {
               time: {
                 unit: "hour",
               },
-              display: true,
+              display: !isDayView,
               position: "right",
               grid: {
                 drawOnChartArea: false, // only want the grid lines for one axis to show up
@@ -119,17 +121,17 @@ export const TrackingChart = ({ date }) => {
                   if (context.dataset.label.toLowerCase() !== "sleep") {
                     return `${context.dataset.label}: ${context.formattedValue}`;
                   }
-                  
+
                   let label = "Sleep:";
                   const data = isDayView ? context.raw?.x : context.raw?.y;
                   if (data.length === 2) {
                     label += `${data[0]} - ${data[1]}`;
                   }
-                  
+
                   if (data.length === 4) {
                     label += `${data[2]} - ${data[1]}`;
                   }
-                  
+
                   return label;
                 },
               },
