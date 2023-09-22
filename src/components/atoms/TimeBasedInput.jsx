@@ -10,7 +10,7 @@ export const TimeBasedInput = ({ name, date, refetch, values }) => {
         [values] : 
         [];
         
-        alert(JSON.stringify(data));
+    return null;
         
     return (
         <div style={{ display: "flex", justifyContent: "stretch" }}>
