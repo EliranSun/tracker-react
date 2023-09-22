@@ -57,9 +57,11 @@ function App() {
         <ErrorBoundary message="chart data">
           <TrackingChart date={date}/>
         </ErrorBoundary>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-4">
           <TrackerQuickActions date={date} userName={userName} data={todayData}/>
-          <TrackerForm date={date} data={todayData} refetch={refetch}/>
+          <ErrorBoundary message="tracker form">
+            <TrackerForm date={date} data={todayData} refetch={refetch}/>
+          </ErrorBoundary>
         </div>
       </section>
     </>
