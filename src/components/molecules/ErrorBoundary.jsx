@@ -4,8 +4,8 @@ class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      error: '',
       hasError: false,
-      errorMessage: '',
       showError: false
     };
   }
@@ -13,7 +13,7 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, info) {
     this.setState({
       hasError: true,
-      errorMessage: error.stack
+      error
     });
     // eslint-disable-next-line no-console
     console.log(error, info);
@@ -33,7 +33,11 @@ class ErrorBoundary extends React.Component {
             Click for technical info
           </button>
           <br/>
-          {this.state.showError && this.state.errorMessage}
+          {this.state.showError &&
+            <div>
+              {this.state.error?.message}, <br/>
+              {this.state.error?.stack}
+            </div>}
         </h1>
       );
     }
