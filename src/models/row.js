@@ -27,7 +27,9 @@ class Row {
     outside,
     nap,
     media,
-    note
+    note,
+    whoohoo,
+    boohoo
   } = {}) {
     this.date = date;
     this.energy = energy || [];
@@ -62,6 +64,8 @@ class Row {
     this.stuffed = stuffed || false;
     this.workout = workout || false;
     this.porn = porn || false;
+    this.boohoo = boohoo || "";
+    this.whoohoo = whoohoo || "";
     this.sick = sick || false;
     this.alcohol = alcohol || false;
     this.keto = keto || false;
