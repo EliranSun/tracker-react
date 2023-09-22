@@ -10,7 +10,7 @@ export const TimeBasedInput = ({ name, date, refetch, values }) => {
           <Input
             type="time"
             name={name}
-            values={values}
+            values={data}
             date={date}
             refetch={refetch}
             isTimeInput
