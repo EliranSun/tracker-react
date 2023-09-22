@@ -16,7 +16,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-  
+
   const CheckboxInput = ({ name }) => {
     return (
       <Input
@@ -28,7 +28,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-  
+
   const NumberInput = ({ name }) => {
     return (
       <Input
@@ -40,7 +40,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-  
+
   return (
     <div className="w-full p-4 border border-white">
       <EnergyInput
@@ -48,6 +48,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
         refetch={refetch}
         values={data.energy}/>
       <div className="w-full">
+        <Input name="note" type="textarea" date={date} value={data.note}/>
         <Fieldset legend="Sleep">
           <TimeInput name="woke_up"/>
           <TimeInput name="went_to_bed"/> (tonight)
@@ -74,11 +75,11 @@ export const TrackerForm = ({ date, data, refetch }) => {
         </Fieldset>
         <Fieldset legend="Well Being">
           <TimeBasedInput values={data.shower} name="shower" refetch={refetch} date={date}/>
-          <CheckboxInput name="work_late"/>
           <TimeBasedInput values={data.workout} name="workout" refetch={refetch} date={date}/>
-          <CheckboxInput name="sick"/>
           <TimeBasedInput values={data.boohoo} name="boohoo" refetch={refetch} date={date}/>
           <TimeBasedInput values={data.whoohoo} name="whoohoo" refetch={refetch} date={date}/>
+          <CheckboxInput name="work_late"/>
+          <CheckboxInput name="sick"/>
         </Fieldset>
       </div>
     </div>

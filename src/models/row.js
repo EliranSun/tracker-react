@@ -26,11 +26,13 @@ class Row {
     youtube,
     outside,
     nap,
-    media
+    media,
+    note
   } = {}) {
     this.date = date;
     this.energy = energy || [];
-    
+    this.note = note || "";
+
     // activities
     this.productivity = productivity || 0;
     this.creative = creative || 0;
@@ -40,21 +42,21 @@ class Row {
     this.nap = nap || 0;
     this.family = family || 0;
     this.media = media || 0;
-    
+
     // consumption
     this.water = water || [];
     this.eating = eating || [];
     this.shower = shower || [];
     this.sugar = sugar || [];
     this.coffee = coffee || [];
-    
+
     // sleep
     this.wentToBed = went_to_bed || "";
     this.isWentToBedNextDay = is_went_to_bed_next_day || false;
     this.wokeUp = woke_up || "";
     this.snooze = snooze || false;
     this.wokeUpMidNight = woke_up_mid_night || false;
-    
+
     // well-being
     this.workLate = work_late || false;
     this.stuffed = stuffed || false;

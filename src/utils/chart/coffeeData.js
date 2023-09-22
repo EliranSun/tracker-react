@@ -22,7 +22,7 @@ export const getCoffeeData = (data = [], date = '', isTotalView = false) => {
           });
         }
       });
-      
+
       if (isTotalView) {
         coffeeData.push({
           x: entry.date,
@@ -30,9 +30,7 @@ export const getCoffeeData = (data = [], date = '', isTotalView = false) => {
         });
       }
     });
-  
-  console.log({ coffeeData });
-  
+
   return {
     type: "bar",
     label: "Coffee",
