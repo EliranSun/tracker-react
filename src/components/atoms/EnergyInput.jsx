@@ -1,6 +1,6 @@
 import { Input } from "./Input";
 
-export const EnergyInput = ({ values, date, refetch }) => {
+export const EnergyInput = ({ values = [], date, refetch }) => {
   return (
     <Input
       type="range"
@@ -9,7 +9,7 @@ export const EnergyInput = ({ values, date, refetch }) => {
       max={10}
       showValue
       isTimeBasedValue
-      values={values}
+      values={values || []}
       refetch={refetch}
       date={date}
     />

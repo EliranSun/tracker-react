@@ -28,7 +28,7 @@ export const Input = ({
 
     return values.at(-1);
   }, [isTimeBasedValue, value, values]);
-  const [innerValue, setInnerValue] = useState();
+  const [innerValue, setInnerValue] = useState('');
   const submitData = useMemo(() => {
     if (isTimeBasedValue) {
       return [...values, { [getTime()]: innerValue }];

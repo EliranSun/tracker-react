@@ -75,9 +75,7 @@ export const getSleepData = (data = [], date = '', isTotalSleepView) => {
   if (data.length === 0) return [];
 
   if (isTotalSleepView) {
-    const result = getTotalSleepData(data);
-    console.log(result);
-    return result;
+    return getTotalSleepData(data);
   }
 
   if (date) {
