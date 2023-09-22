@@ -8,12 +8,13 @@ import { TrackerQuickActions } from "./components/organisms/TrackerQuickActions"
 import { useFormData } from "./hooks/useFormData";
 import { DateTime } from "luxon";
 import { Button } from "./components/atoms/Button";
+import ErrorBoundary from "./components/molecules/ErrorBoundary";
 
 function App() {
   const { isLoggedIn, login, userName } = useLogin();
   const [date, setDate] = useState(getIsoDate());
   const { todayData, refetch } = useFormData(date);
-  
+
   if (!isLoggedIn) {
     return (
       <section className="App">
@@ -24,7 +25,7 @@ function App() {
       </section>
     );
   }
-  
+
   return (
     <>
       <input
@@ -53,7 +54,9 @@ function App() {
         <Button onClick={() => window.location.reload()}>Refresh page</Button>
       </div>
       <section className="flex flex-col md:flex-row md:flex-row gap-4 justify-center">
-        <TrackingChart date={date}/>
+        <ErrorBoundary>
+          <TrackingChart date={date}/>
+        </ErrorBoundary>
         <div className="flex flex-col gap-4">
           <TrackerQuickActions date={date} userName={userName} data={todayData}/>
           <TrackerForm date={date} data={todayData} refetch={refetch}/>
