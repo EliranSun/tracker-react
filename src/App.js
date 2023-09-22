@@ -54,7 +54,7 @@ function App() {
         <Button onClick={() => window.location.reload()}>Refresh page</Button>
       </div>
       <section className="flex flex-col md:flex-row md:flex-row gap-4 justify-center">
-        <ErrorBoundary>
+        <ErrorBoundary message="chart data">
           <TrackingChart date={date}/>
         </ErrorBoundary>
         <div className="flex flex-col gap-4">
