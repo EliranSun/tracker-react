@@ -4,7 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import { isArray } from "lodash";
 
 export const TimeBasedInput = ({ name, date, refetch, values }) => {
-  const data = isArray(values) ? values : [values];
+  const data = values ?
+     isArray(values) ? 
+        values : 
+        [values] : 
+        [];
+        
     return (
         <div style={{ display: "flex", justifyContent: "stretch" }}>
           <Input
