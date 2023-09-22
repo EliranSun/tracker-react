@@ -51,13 +51,13 @@ export const TrackingChart = ({ date }) => {
       getCoffeeData(data.entries, isDayView ? date : '', !isDayView && isTotalSleepView)
     ]
   };
-  
+
   return (
-    <div className="md:w-1/2">
+    <div className="md:w-1/2 border border-white p-4 m-4">
       <div className="flex items-start gap-4">
-        <Button onClick={refetch}>Refresh Charts</Button>
-        <Button onClick={() => setIsDayView(true)}>HOUR</Button>
-        <Button onClick={() => setIsDayView(false)}>DAY</Button>
+        <Button onClick={refetch}>🔄</Button>
+        <Button onClick={() => setIsDayView(true)}>🕗</Button>
+        <Button onClick={() => setIsDayView(false)}>📅</Button>
         <div className="flex items-center">
           <input
             id="totalSleepView"

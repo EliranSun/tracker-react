@@ -34,14 +34,15 @@ function App() {
         className="text-black text-xl"
         value={date}
         onChange={event => setDate(event.target.value)}/>
-      <div className="flex w-full justify-center gap-4">
+      <div className="flex w-full justify-center gap-4 my-4">
         <Button onClick={() => {
           setDate(
             DateTime.fromFormat(date, "yyyy-MM-dd")
               .minus({ days: 1 })
               .toFormat("yyyy-MM-dd")
           );
-        }}>Previous Day
+        }}>
+          ⬅️
         </Button>
         <Button onClick={() => {
           setDate(
@@ -49,9 +50,12 @@ function App() {
               .plus({ days: 1 })
               .toFormat("yyyy-MM-dd")
           );
-        }}>Next Day
+        }}>
+          ➡️
         </Button>
-        <Button onClick={() => window.location.reload()}>Refresh page</Button>
+        <Button onClick={() => window.location.reload()}>
+          🔄
+        </Button>
       </div>
       <section className="flex flex-col md:flex-row md:flex-row gap-4 justify-center">
         <ErrorBoundary message="chart data">
