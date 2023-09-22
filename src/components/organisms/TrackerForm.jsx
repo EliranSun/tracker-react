@@ -6,6 +6,7 @@ import { TimeBasedInput } from "../atoms/TimeBasedInput";
 
 export const TrackerForm = ({ date, data, refetch }) => {
   const TimeInput = ({ name }) => {
+    return null;
     return (
       <Input
         type="time"
