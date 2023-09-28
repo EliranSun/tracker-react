@@ -47,7 +47,7 @@ export const Input = ({
   }, [innerValue, isTimeBasedValue, type, values]);
   
   useEffect(() => {
-    if ((type === 'range' && currentValue) || type === 'text' || type === 'textarea') {
+    if ((type === 'range' && currentValue) || type === 'text' || type === 'textarea' || type === "time") {
       setInnerValue(currentValue);
     }
   }, [currentValue, type]);
