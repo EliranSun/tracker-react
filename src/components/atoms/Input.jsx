@@ -29,7 +29,7 @@ export const Input = ({
     
     return values.at(-1);
   }, [isTimeBasedValue, value, values]);
-  const [innerValue, setInnerValue] = useState('');
+  const [innerValue, setInnerValue] = useState(currentValue);
   const submitData = useMemo(() => {
     if (isTimeBasedValue) {
       return [...values, { [getTime()]: innerValue }];
@@ -99,7 +99,7 @@ export const Input = ({
             className="text-2xl p-4 text-black font-black w-full"
             id={snakedName}
             name={snakedName}
-            value={currentValue}
+            value={innerValue}
             defaultChecked={Boolean(value)}
             min={min}
             max={max}
