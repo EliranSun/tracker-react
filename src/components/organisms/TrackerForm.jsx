@@ -16,7 +16,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-
+  
   const CheckboxInput = ({ name }) => {
     return (
       <Input
@@ -28,7 +28,7 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-
+  
   const NumberInput = ({ name }) => {
     return (
       <Input
@@ -40,9 +40,9 @@ export const TrackerForm = ({ date, data, refetch }) => {
       />
     );
   };
-
+  
   return (
-    <div className="w-full p-4 border border-white">
+    <div className="w-full pb-24">
       <EnergyInput
         date={date}
         refetch={refetch}

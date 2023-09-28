@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { noop, snakeCase } from "lodash";
 import { SubmitButton } from "./SubmitButton";
 import { getTime } from "../../utils/time";
+import classNames from "classnames";
 
 export const Input = ({
   name,
@@ -19,13 +20,13 @@ export const Input = ({
   const currentValue = useMemo(() => {
     if (value) return value;
     if (!values) return "";
-
+    
     if (isTimeBasedValue) {
       return values.map(item => {
         return Object.values(item)[0];
       }).at(-1);
     }
-
+    
     return values.at(-1);
   }, [isTimeBasedValue, value, values]);
   const [innerValue, setInnerValue] = useState('');
@@ -33,60 +34,72 @@ export const Input = ({
     if (isTimeBasedValue) {
       return [...values, { [getTime()]: innerValue }];
     }
-
+    
     if (values) {
       return [...values, innerValue];
     }
-
+    
     if (type === "checkbox") {
       return Boolean(innerValue);
     }
-
+    
     return innerValue;
   }, [innerValue, isTimeBasedValue, type, values]);
-
+  
   useEffect(() => {
     if ((type === 'range' && currentValue) || type === 'text' || type === 'textarea') {
       setInnerValue(currentValue);
     }
   }, [currentValue, type]);
-
+  
   const getDisplayValue = () => {
-    if (type === 'text' || type === 'textarea') return '';
-    if (type === 'checkbox') {
-      return currentValue ? 'Yes' : 'No';
-    }
-
+    if (type === 'text' || type === 'textarea' || type === 'checkbox') return '';
+    // if (type === 'checkbox') {
+    //   return currentValue ? 'Yes' : 'No';
+    // }
+    
     return currentValue;
   }
+  
+  console.log({ currentValue, innerValue, type, values });
   return (
-    <div className="w-full items-center flex text-left gap-4 border-t border-b border-white">
-      <div className="w-32 text-2xl border-r-2 border-white block flex items-center justify-center h-12 font-black">
-        {getDisplayValue()}
-      </div>
-      <div className="flex justify-between w-full items-center">
-        <label htmlFor={snakedName}>
-          {name.replaceAll("_", " ").toUpperCase()}
-          {showValue ? ` - ${innerValue}` : ""}
+    <div className="w-full text-black items-center flex text-left gap-4 bg-white/80 mb-2 p-4 rounded">
+      <div className={classNames("flex justify-between w-full", {
+        'flex-col': type !== 'checkbox',
+      })}>
+        <label htmlFor={snakedName} className="flex justify-between text-xl w-full">
+          <span className="font-black">{name.replaceAll("_", " ").toUpperCase()}</span>
+          <span>{showValue ? ` - ${innerValue}` : ""}</span>
+          <div className="w-1/3">
+            <SubmitButton
+              date={date}
+              name={name}
+              isDisabled={
+                (innerValue === "" && type !== "text" && type !== 'textarea') ||
+                String(innerValue) === String(value)
+              }
+              data={submitData}
+              onSuccess={() => setTimeout(refetch, 2500)}
+            />
+          </div>
         </label>
-        {type === 'textarea'
-          ? (
+        {/*<h2 className="text-3xl text-center">{getDisplayValue()}</h2>*/}
+        {type === 'textarea' ? (
             <textarea
               id={snakedName}
               name={snakedName}
               value={innerValue}
-              className="text-black max-w-[200px] w-full"
+              className="text-black w-full"
               onChange={(e) => {
                 setInnerValue(e.target.value);
               }}
-            />
-          )
+            />)
           : <input
             type={type}
-            className="text-black max-w-[200px] w-full"
+            className="text-2xl p-4 text-black font-black w-full"
             id={snakedName}
             name={snakedName}
-            value={innerValue}
+            value={currentValue}
             defaultChecked={Boolean(value)}
             min={min}
             max={max}
@@ -98,18 +111,6 @@ export const Input = ({
               setInnerValue(e.target.value);
             }}
           />}
-      </div>
-      <div className="px-4">
-        <SubmitButton
-          date={date}
-          name={name}
-          isDisabled={
-            (innerValue === "" && type !== "text" && type !== 'textarea') ||
-            String(innerValue) === String(value)
-          }
-          data={submitData}
-          onSuccess={() => setTimeout(refetch, 2500)}
-        />
       </div>
     </div>
   );

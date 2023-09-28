@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { noop } from "lodash";
 import { updateTrackingData } from "../../utils/firebase";
+import classNames from "classnames";
 
 const TimeBasedInput = ["eating", "water", "shower", "sugar", "coffee"];
 
@@ -16,9 +17,12 @@ export const SubmitButton = ({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const loweredName = name.toLowerCase();
-
+  
   return (
     <button
+      className={classNames("w-full bg-white rounded", {
+        "opacity-30": isDisabled || isLoading,
+      })}
       disabled={isDisabled || isLoading}
       onClick={async () => {
         setIsLoading(true);
