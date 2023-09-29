@@ -67,9 +67,9 @@ export const Input = ({
       <div className={classNames("flex justify-between w-full", {
         'flex-col': type !== 'checkbox',
       })}>
-        <label htmlFor={snakedName} className="flex justify-between text-xl w-full">
-          <span className="font-black">{name.replaceAll("_", " ").toUpperCase()}</span>
-          <span>{showValue ? ` - ${innerValue}` : ""}</span>
+        <label htmlFor={snakedName} className="flex justify-between text-md w-full">
+          <span className="font-black text-white">{name.replaceAll("_", " ").toUpperCase()}</span>
+          <span className="text-white">{showValue ? ` - ${innerValue}` : ""}</span>
           <div className="w-1/3">
             <SubmitButton
               date={date}
