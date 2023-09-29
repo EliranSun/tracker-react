@@ -63,7 +63,7 @@ export const Input = ({
   
   console.log({ currentValue, innerValue, type, values });
   return (
-    <div className="w-full text-black items-center flex text-left gap-4 bg-white/80 mb-2 p-4 rounded">
+    <div className="w-full text-black items-center flex text-left gap-4 bg-white/50 mb-2 p-4 rounded">
       <div className={classNames("flex justify-between w-full", {
         'flex-col': type !== 'checkbox',
       })}>
