@@ -20,7 +20,7 @@ export const SubmitButton = ({
   
   return (
     <button
-      className={classNames("w-full bg-white rounded", {
+      className={classNames("w-full rounded", {
         "opacity-30": isDisabled || isLoading,
       })}
       disabled={isDisabled || isLoading}
