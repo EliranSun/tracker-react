@@ -49,15 +49,24 @@ const DateControls = ({ date, setDate }) => {
 
 const Menu = ({ onChartButtonClick, onFormButtonClick }) => {
   return (
-    <section className="fixed bottom-0 z-10 bg-gray-800 border-t border-white w-screen h-20 flex flex-row gap-4 items-center justify-evenly">
+    <section className="fixed bottom-0 z-10 bg-gray-800 border-t border-white w-screen h-20 flex flex-row gap-4 items-start justify-evenly">
       <Button onClick={onFormButtonClick}>
-        <ClipboardText color="white" size={ICON_SIZE}/>
+        <div className="text-white flex flex-col text-xs items-center justify-center">
+          <ClipboardText color="white" size={ICON_SIZE}/>
+          Track
+        </div>
       </Button>
       <Button onClick={onChartButtonClick}>
-        <ChartBar color="white" size={ICON_SIZE}/>
+        <div className="text-white flex flex-col text-xs items-center justify-center">
+          <ChartBar color="white" size={ICON_SIZE}/>
+          Analytics
+        </div>
       </Button>
       <Button onClick={() => window.location.reload()}>
-        <ArrowsClockwise color="white" size={ICON_SIZE}/>
+        <div className="text-white flex flex-col text-xs items-center">
+          <ArrowsClockwise color="white" size={ICON_SIZE}/>
+          Refresh
+        </div>
       </Button>
     </section>
   );
