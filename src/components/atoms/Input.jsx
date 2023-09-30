@@ -58,7 +58,7 @@ export const Input = ({
 
   return (
     <>
-      <div className={classNames("w-full text-black justify-between items-center flex text-left gap-4 bg-white/20 mb-4 p-4 rounded-2xl", {
+      <div className={classNames("w-fit text-black justify-between items-center flex text-left gap-4 bg-white/20 mb-4 p-4 rounded-2xl", {
         'flex-col': type !== 'checkbox' && type !== 'number' && type !== 'time',
       })}>
         <label htmlFor={snakedName} className="flex justify-between text-md">
