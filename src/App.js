@@ -13,6 +13,14 @@ import { ArrowCircleLeft, ArrowCircleRight, ArrowsClockwise, ChartBar, Clipboard
 
 const ICON_SIZE = 25;
 
+const MenuIcon = ({ children }) => {
+  return (
+    <div className="w-screen text-white flex flex-col text-xs items-center justify-center">
+      {children}
+    </div>
+  );
+};
+
 const DateControls = ({ date, setDate }) => {
   return (
     <section>
@@ -49,24 +57,24 @@ const DateControls = ({ date, setDate }) => {
 
 const Menu = ({ onChartButtonClick, onFormButtonClick }) => {
   return (
-    <section className="fixed bottom-0 z-10 bg-gray-800 border-t border-white w-screen h-24 flex flex-row gap-8 items-start justify-center">
+    <section className="fixed bottom-0 z-10 bg-gray-800 w-screen h-24 flex flex-row items-start">
       <Button onClick={onFormButtonClick}>
-        <div className="text-white flex flex-col text-xs items-center justify-center">
+        <MenuIcon>
           <ClipboardText color="white" size={ICON_SIZE}/>
           Track
-        </div>
+        </MenuIcon>
       </Button>
       <Button onClick={onChartButtonClick}>
-        <div className="text-white flex flex-col text-xs items-center justify-center">
+        <MenuIcon>
           <ChartBar color="white" size={ICON_SIZE}/>
           Analytics
-        </div>
+        </MenuIcon>
       </Button>
       <Button onClick={() => window.location.reload()}>
-        <div className="text-white flex flex-col text-xs items-center">
+        <MenuIcon>
           <ArrowsClockwise color="white" size={ICON_SIZE}/>
           Refresh
-        </div>
+        </MenuIcon>
       </Button>
     </section>
   );
