@@ -49,7 +49,7 @@ const DateControls = ({ date, setDate }) => {
 
 const Menu = ({ onChartButtonClick, onFormButtonClick }) => {
   return (
-    <section className="fixed bottom-0 z-10 bg-gray-800 border-t border-white w-screen h-16 flex flex-row gap-4 items-center justify-evenly">
+    <section className="fixed bottom-0 z-10 bg-gray-800 border-t border-white w-screen h-20 flex flex-row gap-4 items-center justify-evenly">
       <Button onClick={onFormButtonClick}>
         <ClipboardText color="white" size={ICON_SIZE}/>
       </Button>
