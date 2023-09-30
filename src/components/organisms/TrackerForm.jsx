@@ -84,13 +84,6 @@ export const TrackerForm = ({ date, data, refetch }) => {
         values={data.energy}/>
       <div className="w-full">
         <Input icon={<Note {...iconProps}/>} name="note" type="textarea" date={date} value={data.note}/>
-        <Fieldset legend="Sleep">
-          <TimeInput icon={<SunHorizon {...iconProps}/>} name="woke_up"/>
-          <TimeInput icon={<Moon {...iconProps}/>} name="went_to_bed"/>
-          <CheckboxInput icon={<BellSimpleZ {...iconProps}/>} name="snooze"/>
-          <CheckboxInput icon={<SmileyXEyes {...iconProps}/>} name="woke_up_mid_night"/>
-          <NumberInput icon={<Couch {...iconProps}/>} name="nap"/>
-        </Fieldset>
         <Fieldset legend="Consumption">
           <TimeBasedInput
             icon={<ForkKnife {...iconProps}/>}
@@ -105,15 +98,15 @@ export const TrackerForm = ({ date, data, refetch }) => {
             refetch={refetch}
             date={date}/>
           <TimeBasedInput
-            icon={<Drop {...iconProps}/>}
-            values={data.water}
-            name="water"
-            refetch={refetch}
-            date={date}/>
-          <TimeBasedInput
             icon={<Cake {...iconProps}/>}
             values={data.sugar}
             name="sugar"
+            refetch={refetch}
+            date={date}/>
+          <TimeBasedInput
+            icon={<Balloon {...iconProps}/>}
+            values={data.stuffed}
+            name="stuffed"
             refetch={refetch}
             date={date}/>
           <TimeBasedInput
@@ -123,20 +116,20 @@ export const TrackerForm = ({ date, data, refetch }) => {
             refetch={refetch}
             date={date}/>
           <TimeBasedInput
-            icon={<Balloon {...iconProps}/>}
-            values={data.stuffed}
-            name="stuffed"
+            icon={<Drop {...iconProps}/>}
+            values={data.water}
+            name="water"
             refetch={refetch}
             date={date}/>
           <CheckboxInput icon={<Fish {...iconProps}/>} name="keto"/>
         </Fieldset>
         <Fieldset legend="Activities (Hours)">
           <NumberInput icon={<MathOperations {...iconProps}/>} name="productivity"/>
-          <NumberInput icon={<Tree {...iconProps}/>} name="family"/>
-          <NumberInput icon={<ChatsCircle {...iconProps}/>} name="social"/>
           <NumberInput icon={<PaintBrush {...iconProps}/>} name="creative"/>
-          <NumberInput icon={<Mountains {...iconProps}/>} name="outside"/>
           <NumberInput icon={<GameController {...iconProps}/>} name="media"/>
+          <NumberInput icon={<ChatsCircle {...iconProps}/>} name="social"/>
+          <NumberInput icon={<Tree {...iconProps}/>} name="family"/>
+          <NumberInput icon={<Mountains {...iconProps}/>} name="outside"/>
         </Fieldset>
         <Fieldset legend="Well Being">
           <TimeBasedInput
@@ -152,19 +145,26 @@ export const TrackerForm = ({ date, data, refetch }) => {
             refetch={refetch}
             date={date}/>
           <TimeBasedInput
-            icon={<HeartBreak {...iconProps}/>}
-            values={data.boohoo}
-            name="boohoo"
-            refetch={refetch}
-            date={date}/>
-          <TimeBasedInput
             icon={<Heart {...iconProps}/>}
             values={data.whoohoo}
             name="whoohoo"
             refetch={refetch}
             date={date}/>
+          <TimeBasedInput
+            icon={<HeartBreak {...iconProps}/>}
+            values={data.boohoo}
+            name="boohoo"
+            refetch={refetch}
+            date={date}/>
           <CheckboxInput icon={<Laptop {...iconProps}/>} name="work_late"/>
           <CheckboxInput icon={<ThermometerCold {...iconProps}/>} name="sick"/>
+        </Fieldset>
+        <Fieldset legend="Sleep">
+          <TimeInput icon={<SunHorizon {...iconProps}/>} name="woke_up"/>
+          <TimeInput icon={<Moon {...iconProps}/>} name="went_to_bed"/>
+          <CheckboxInput icon={<BellSimpleZ {...iconProps}/>} name="snooze"/>
+          <CheckboxInput icon={<SmileyXEyes {...iconProps}/>} name="woke_up_mid_night"/>
+          <NumberInput icon={<Couch {...iconProps}/>} name="nap"/>
         </Fieldset>
       </div>
     </div>
