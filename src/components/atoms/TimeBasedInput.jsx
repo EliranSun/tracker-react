@@ -1,7 +1,7 @@
 import { Input } from "./Input";
 import { isArray } from "lodash";
 
-export const TimeBasedInput = ({ name, date, refetch, values }) => {
+export const TimeBasedInput = ({ name, date, refetch, values, icon }) => {
   const data = values
     ? isArray(values) ? values : [values]
     : [];
@@ -13,6 +13,7 @@ export const TimeBasedInput = ({ name, date, refetch, values }) => {
         name={name}
         values={data}
         date={date}
+        icon={icon}
         refetch={refetch}
         isTimeInput
       />

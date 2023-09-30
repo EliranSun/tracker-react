@@ -9,11 +9,14 @@ import { useFormData } from "./hooks/useFormData";
 import { DateTime } from "luxon";
 import { Button } from "./components/atoms/Button";
 import ErrorBoundary from "./components/molecules/ErrorBoundary";
+import { ArrowCircleLeft, ArrowCircleRight, ArrowsClockwise, ChartBar, ClipboardText } from "@phosphor-icons/react";
+
+const ICON_SIZE = 25;
 
 const DateControls = ({ date, setDate }) => {
   return (
     <section>
-      <div className="fixed top-0 z-10 bg-gray-800 pb-4 flex w-full justify-center gap-4">
+      <div className="fixed top-0 z-10 bg-gray-800 p-4 flex w-full justify-center items-center gap-4">
         <Button onClick={() => {
           setDate(
             DateTime.fromFormat(date, "yyyy-MM-dd")
@@ -21,11 +24,12 @@ const DateControls = ({ date, setDate }) => {
               .toFormat("yyyy-MM-dd")
           );
         }}>
-          ⬅️
+          <ArrowCircleLeft color="white" size={ICON_SIZE}/>
         </Button>
         <input
           type="date"
           name="Date"
+          style={{ width: window.innerWidth }}
           className="text-black text-xl h-12"
           value={date}
           onChange={event => setDate(event.target.value)}/>
@@ -36,7 +40,7 @@ const DateControls = ({ date, setDate }) => {
               .toFormat("yyyy-MM-dd")
           );
         }}>
-          ➡️
+          <ArrowCircleRight color="white" size={ICON_SIZE}/>
         </Button>
       </div>
     </section>
@@ -45,12 +49,16 @@ const DateControls = ({ date, setDate }) => {
 
 const Menu = ({ onChartButtonClick, onFormButtonClick }) => {
   return (
-    <section className="fixed bottom-0 z-10 bg-gray-800 border-t border-white w-screen h-24">
-      <div className="flex flex-row gap-4 items-center justify-evenly h-24 p-4">
-        <Button onClick={() => window.location.reload()}>🔄</Button>
-        <Button onClick={onChartButtonClick}>📊</Button>
-        <Button onClick={onFormButtonClick}>📋</Button>
-      </div>
+    <section className="fixed bottom-0 z-10 bg-gray-800 border-t border-white w-screen h-16 flex flex-row gap-4 items-center justify-evenly">
+      <Button onClick={onFormButtonClick}>
+        <ClipboardText color="white" size={ICON_SIZE}/>
+      </Button>
+      <Button onClick={onChartButtonClick}>
+        <ChartBar color="white" size={ICON_SIZE}/>
+      </Button>
+      <Button onClick={() => window.location.reload()}>
+        <ArrowsClockwise color="white" size={ICON_SIZE}/>
+      </Button>
     </section>
   );
 }
@@ -65,7 +73,7 @@ function App() {
   const [date, setDate] = useState(getIsoDate());
   const [page, setPage] = useState(Pages.FORM);
   const { todayData, refetch } = useFormData(date);
-  
+
   if (!isLoggedIn) {
     return (
       <section className="App">
@@ -76,20 +84,20 @@ function App() {
       </section>
     );
   }
-  
+
   return (
     <>
       <DateControls date={date} setDate={setDate}/>
       <Menu
         onChartButtonClick={() => setPage(Pages.CHART)}
         onFormButtonClick={() => setPage(Pages.FORM)}/>
-      <div>
+      <div className="flex flex-col gap-4 p-4 my-24">
         {page === Pages.CHART &&
           <ErrorBoundary message="chart data">
             <TrackingChart date={date}/>
           </ErrorBoundary>}
         {page === Pages.FORM &&
-          <div className="flex flex-col gap-4 p-4 my-4">
+          <div>
             <TrackerQuickActions date={date} userName={userName} data={todayData}/>
             <ErrorBoundary message="tracker form">
               <TrackerForm date={date} data={todayData} refetch={refetch}/>

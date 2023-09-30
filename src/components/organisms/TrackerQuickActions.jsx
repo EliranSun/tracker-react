@@ -3,14 +3,17 @@ import { getTime } from "../../utils/time";
 import { DateTime } from "luxon";
 import { updateTrackingData } from "../../utils/firebase";
 import { useState } from "react";
+import { Cake, Coffee, ForkKnife, Bed, Bathtub, Drop } from "@phosphor-icons/react";
+
+const ICON_SIZE = 21;
 
 const Fields = {
-  wokeUp: { key: "woke_up", label: "🥱" },
-  coffee: { key: "coffee", label: "☕️" },
-  eating: { key: "eating", label: "🍽️" },
-  water: { key: "water", label: "💧" },
-  sugar: { key: "sugar", label: "🍞" },
-  shower: { key: "shower", label: "🚿" },
+  wokeUp: { key: "woke_up", label: <Bed size={ICON_SIZE}/> },
+  coffee: { key: "coffee", label: <Coffee size={ICON_SIZE}/> },
+  eating: { key: "eating", label: <ForkKnife size={ICON_SIZE}/> },
+  water: { key: "water", label: <Drop size={ICON_SIZE}/> },
+  sugar: { key: "sugar", label: <Cake size={ICON_SIZE}/> },
+  shower: { key: "shower", label: <Bathtub size={ICON_SIZE}/> },
 };
 
 const ActionButton = ({ action, data, date, label }) => {
@@ -18,6 +21,8 @@ const ActionButton = ({ action, data, date, label }) => {
 
   return (
     <Button
+      color="white"
+      type="box"
       onClick={async () => {
         const time = DateTime.local().toFormat("HH:mm");
         const value = { [action]: [...data[action], time] };
@@ -30,9 +35,9 @@ const ActionButton = ({ action, data, date, label }) => {
           setState("error");
         }
       }}>
-      <div>
-        <span>{label}</span>
-        <span className="text-xs">{action}</span>
+      <div className="flex flex-col items-center justify-center">
+        <span className="">{label}</span>
+        <span className="">{action}</span>
       </div>
       {state === "success" && <span>✅</span>}
       {state === "loading" && <span>⏳</span>}
@@ -51,21 +56,16 @@ export const TrackerQuickActions = ({ userName = "", data = {}, date }) => {
   else actions.push(Fields.eating, Fields.coffee, Fields.sugar, Fields.shower, Fields.water);
 
   return (
-    <section className="flex flex-col border border-white p-4 box-border md:w-5/6">
+    <section className="flex flex-col box-border md:w-5/6 mb-12">
       <div>
-        <h1 className="text-xl">Good {timeOfDayGreeting} {userName.split(' ')[0]}!</h1>
+        <h1 className="text-2xl">Good {timeOfDayGreeting} {userName.split(' ')[0]}!</h1>
         <h2><b>It's {getTime()}.</b> Want to quickly log something?</h2>
         <h3 className="text-xs">Clicking will add the activity automatically with current time</h3>
       </div>
-      <div className="flex gap-4 mt-4 flex-wrap">
+      <div className="flex gap-4 mt-4">
         {actions
-          .filter(({ key }) => {
-            if (data.wokeUp && key === Fields.wokeUp) {
-              return false;
-            }
-
-            return true;
-          }).map(({ key, label }) => {
+          .filter(({ key }) => !(data.wokeUp && key === Fields.wokeUp))
+          .map(({ key, label }) => {
             return (
               <ActionButton
                 date={date}

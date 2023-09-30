@@ -1,105 +1,90 @@
 import { useEffect, useMemo, useState } from "react";
-import { noop, snakeCase } from "lodash";
-import { SubmitButton } from "./SubmitButton";
+import { snakeCase } from "lodash";
 import { getTime } from "../../utils/time";
 import classNames from "classnames";
+import { useDebounce } from "react-use";
+import { useUpdateForm } from "../../hooks/useUpdateForm";
 
 export const Input = ({
   name,
   type,
-  date,
   value = "",
   values,
   min,
   max,
-  refetch = noop,
+  date,
+  icon = null,
   isTimeBasedValue = false,
   showValue = false,
 }) => {
   const snakedName = snakeCase(name);
+  const { submit, isLoading, error, success } = useUpdateForm({ name, date });
   const currentValue = useMemo(() => {
     if (value) return value;
     if (!values) return "";
-    
+
     if (isTimeBasedValue) {
       return values.map(item => {
         return Object.values(item)[0];
       }).at(-1);
     }
-    
+
     return values.at(-1);
   }, [isTimeBasedValue, value, values]);
   const [innerValue, setInnerValue] = useState(currentValue);
-  const submitData = useMemo(() => {
-    if (isTimeBasedValue) {
-      return [...values, { [getTime()]: innerValue }];
-    }
-    
-    if (values) {
-      return [...values, innerValue];
-    }
-    
-    if (type === "checkbox") {
-      return Boolean(innerValue);
-    }
-    
-    return innerValue;
-  }, [innerValue, isTimeBasedValue, type, values]);
-  
+  const [debouncedValue, setDebouncedValue] = useState(null);
+  useDebounce(() => {
+    setDebouncedValue(innerValue);
+  }, 2000, [innerValue]);
+
   useEffect(() => {
     if ((type === 'range' && currentValue) || type === 'text' || type === 'textarea' || type === "time") {
       setInnerValue(currentValue);
     }
   }, [currentValue, type]);
-  
-  const getDisplayValue = () => {
-    if (type === 'text' || type === 'textarea' || type === 'checkbox') return '';
-    // if (type === 'checkbox') {
-    //   return currentValue ? 'Yes' : 'No';
-    // }
-    
-    return currentValue;
-  }
-  
-  console.log({ currentValue, innerValue, type, values });
+
+  useEffect(() => {
+    if ([null, '', undefined].includes(debouncedValue) || debouncedValue === currentValue)
+      return;
+
+    let data;
+    if (isTimeBasedValue) data = [...values, { [getTime()]: innerValue }];
+    else if (values) data = [...values, innerValue];
+    else if (type === "checkbox") data = Boolean(innerValue);
+    else data = innerValue;
+
+    submit(data);
+  }, [debouncedValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <div className="w-full text-black items-center flex text-left gap-4 bg-white/50 mb-4 p-4 rounded">
-      <div className={classNames("flex justify-between w-full", {
-        'flex-col': type !== 'checkbox',
+    <>
+      <div className={classNames("w-full text-black justify-between items-center flex text-left gap-4 bg-white/20 mb-4 p-4 rounded-2xl", {
+        'flex-col': type !== 'checkbox' && type !== 'number' && type !== 'time',
       })}>
-        <label htmlFor={snakedName} className="flex justify-between text-md w-full">
-          <span className="font-black text-white">{name.replaceAll("_", " ").toUpperCase()}</span>
+        <label htmlFor={snakedName} className="flex justify-between text-md">
+          <span className="font-black text-white my-2 flex items-center gap-2">
+            {icon}
+            {name.replaceAll("_", " ").toUpperCase()}
+          </span>
           <span className="text-white">{showValue ? ` - ${innerValue}` : ""}</span>
-          <div className="w-1/3">
-            <SubmitButton
-              date={date}
-              name={name}
-              isDisabled={
-                (innerValue === "" && type !== "text" && type !== 'textarea') ||
-                String(innerValue) === String(value)
-              }
-              data={submitData}
-              onSuccess={() => setTimeout(refetch, 2500)}
-            />
-          </div>
         </label>
-        {/*<h2 className="text-3xl text-center">{getDisplayValue()}</h2>*/}
         {type === 'textarea' ? (
             <textarea
               id={snakedName}
               name={snakedName}
-              value={innerValue}
-              className="text-black w-full"
+              value={String(innerValue)}
+              className="text-black w-full p-4"
               onChange={(e) => {
                 setInnerValue(e.target.value);
               }}
             />)
           : <input
             type={type}
-            className="text-2xl p-4 text-black font-black w-full"
+            style={{ width: type === 'checkbox' ? 'auto' : window.innerWidth / 2.5 }}
+            className="flex p-4 text-black font-black text-center"
             id={snakedName}
             name={snakedName}
-            value={innerValue}
+            value={type === 'number' ? Number(innerValue) : String(innerValue)}
             defaultChecked={Boolean(value)}
             min={min}
             max={max}
@@ -112,6 +97,16 @@ export const Input = ({
             }}
           />}
       </div>
-    </div>
+      <div
+        role="status"
+        className={classNames("fixed bottom-28 right-4 z-10 border-4 border-black p-8 bg-white animate-spin rounded-full transition-all", {
+          "opacity-0": !isLoading && !error && !success,
+          "opacity-100": isLoading || error || success,
+        })}>
+        {isLoading && '⏳'}
+        {error && '❌'}
+        {success && '✅'}
+      </div>
+    </>
   );
 };

@@ -12,18 +12,13 @@ body, html {
     sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #282c34;
+    background-color: #4c5464;
     color: #fff;
 }
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
-}
-
-section {
-    display: flex;
-    padding-bottom: 50px;
 }
 
 form {
