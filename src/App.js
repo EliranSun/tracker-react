@@ -100,7 +100,7 @@ function App() {
       <Menu
         onChartButtonClick={() => setPage(Pages.CHART)}
         onFormButtonClick={() => setPage(Pages.FORM)}/>
-      <div className="flex flex-col gap-4 p-4 my-24">
+      <div className="flex flex-col gap-4 p-4 my-24 w-full">
         {page === Pages.CHART &&
           <ErrorBoundary message="chart data">
             <TrackingChart date={date}/>
