@@ -22,13 +22,13 @@ export const Input = ({
   const currentValue = useMemo(() => {
     if (value) return value;
     if (!values) return "";
-
+    
     if (isTimeBasedValue) {
       return values.map(item => {
         return Object.values(item)[0];
       }).at(-1);
     }
-
+    
     return values.at(-1);
   }, [isTimeBasedValue, value, values]);
   const [innerValue, setInnerValue] = useState(currentValue);
@@ -36,26 +36,26 @@ export const Input = ({
   useDebounce(() => {
     setDebouncedValue(innerValue);
   }, 2000, [innerValue]);
-
+  
   useEffect(() => {
     if ((type === 'range' && currentValue) || type === 'text' || type === 'textarea' || type === "time") {
       setInnerValue(currentValue);
     }
   }, [currentValue, type]);
-
+  
   useEffect(() => {
     if ([null, '', undefined].includes(debouncedValue) || debouncedValue === currentValue)
       return;
-
+    
     let data;
     if (isTimeBasedValue) data = [...values, { [getTime()]: innerValue }];
     else if (values) data = [...values, innerValue];
     else if (type === "checkbox") data = Boolean(innerValue);
     else data = innerValue;
-
+    
     submit(data);
   }, [debouncedValue]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  
   return (
     <>
       <div className={classNames("w-full text-black justify-between items-center flex text-left gap-4 bg-white/20 mb-4 p-4 rounded-2xl", {
@@ -80,11 +80,10 @@ export const Input = ({
             />)
           : <input
             type={type}
-            // style={{ width: type === 'checkbox' ? 'auto' : window.innerWidth / 2.5 }}
             className="flex p-4 text-black font-black text-center w-full max-w-[40%]"
             id={snakedName}
             name={snakedName}
-            value={type === 'number' ? Number(innerValue) : String(innerValue)}
+            value={innerValue}
             defaultChecked={Boolean(value)}
             min={min}
             max={max}
