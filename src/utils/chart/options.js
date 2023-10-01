@@ -1,15 +1,4 @@
 export const getOptions = (isDayView, isTotalSleepView, timeLabels) => {
-  // let additionalOptions = {};
-  // if (!isDayView) {
-  //   additionalOptions = {
-  //     x1: {
-  //       beginAtZero: true,
-  //       labels: data.dayLabels,
-  //       hidden: true
-  //     },
-  //   }
-  // }  
-  
   return {
     interaction: {
       mode: "index",
@@ -19,6 +8,9 @@ export const getOptions = (isDayView, isTotalSleepView, timeLabels) => {
     scales: {
       x: {
         stacked: !isDayView,
+        ticks: {
+          color: "white"
+        }
       },
       y: {
         beginAtZero: true,
@@ -29,6 +21,7 @@ export const getOptions = (isDayView, isTotalSleepView, timeLabels) => {
         stacked: true,
         ticks: {
           stepSize: 1,  // A smaller step size increases the density
+          color: "white"
         },
       },
       y1: {
@@ -45,10 +38,16 @@ export const getOptions = (isDayView, isTotalSleepView, timeLabels) => {
         grid: {
           drawOnChartArea: false, // only want the grid lines for one axis to show up
         },
+        ticks: {
+          color: "white"
+        }
       },
       y2: {
         beginAtZero: false,
         display: false,
+        ticks: {
+          color: "white"
+        }
       },
     },
     plugins: {
