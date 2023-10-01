@@ -6,83 +6,15 @@ import { useState } from "react";
 import { getIsoDate } from "./utils/date";
 import { TrackerQuickActions } from "./components/organisms/TrackerQuickActions";
 import { useFormData } from "./hooks/useFormData";
-import { DateTime } from "luxon";
-import { Button } from "./components/atoms/Button";
 import ErrorBoundary from "./components/molecules/ErrorBoundary";
-import { ArrowCircleLeft, ArrowCircleRight, ArrowsClockwise, ChartBar, ClipboardText } from "@phosphor-icons/react";
-
-const ICON_SIZE = 25;
-
-const MenuIcon = ({ children }) => {
-  return (
-    <div className="w-screen text-white flex flex-col text-xs items-center justify-center">
-      {children}
-    </div>
-  );
-};
-
-const DateControls = ({ date, setDate }) => {
-  return (
-    <section>
-      <div className="fixed top-0 z-10 bg-gray-800 p-4 flex w-full justify-center items-center gap-4">
-        <Button onClick={() => {
-          setDate(
-            DateTime.fromFormat(date, "yyyy-MM-dd")
-              .minus({ days: 1 })
-              .toFormat("yyyy-MM-dd")
-          );
-        }}>
-          <ArrowCircleLeft color="white" size={ICON_SIZE}/>
-        </Button>
-        <input
-          type="date"
-          name="Date"
-          style={{ width: window.innerWidth }}
-          className="text-black text-xl h-12"
-          value={date}
-          onChange={event => setDate(event.target.value)}/>
-        <Button onClick={() => {
-          setDate(
-            DateTime.fromFormat(date, "yyyy-MM-dd")
-              .plus({ days: 1 })
-              .toFormat("yyyy-MM-dd")
-          );
-        }}>
-          <ArrowCircleRight color="white" size={ICON_SIZE}/>
-        </Button>
-      </div>
-    </section>
-  );
-};
-
-const Menu = ({ onChartButtonClick, onFormButtonClick }) => {
-  return (
-    <section className="fixed bottom-0 z-10 bg-gray-800 w-screen h-24 flex flex-row items-start">
-      <Button onClick={onFormButtonClick}>
-        <MenuIcon>
-          <ClipboardText color="white" size={ICON_SIZE}/>
-          Track
-        </MenuIcon>
-      </Button>
-      <Button onClick={onChartButtonClick}>
-        <MenuIcon>
-          <ChartBar color="white" size={ICON_SIZE}/>
-          Analytics
-        </MenuIcon>
-      </Button>
-      <Button onClick={() => window.location.reload()}>
-        <MenuIcon>
-          <ArrowsClockwise color="white" size={ICON_SIZE}/>
-          Refresh
-        </MenuIcon>
-      </Button>
-    </section>
-  );
-}
+import { DateControls } from "./components/molecules/DateControls";
+import { MenuBar } from "./components/molecules/MenuBar";
+import { InsightsView } from "./components/organisms/InsightsView";
 
 const Pages = {
   CHART: "chart",
-  FORM: "form"
+  FORM: "form",
+  INSIGHTS: "insights",
 };
 
 function App() {
@@ -90,7 +22,7 @@ function App() {
   const [date, setDate] = useState(getIsoDate());
   const [page, setPage] = useState(Pages.FORM);
   const { todayData, refetch } = useFormData(date);
-
+  
   if (!isLoggedIn) {
     return (
       <section className="App">
@@ -101,14 +33,19 @@ function App() {
       </section>
     );
   }
-
+  
   return (
     <>
       <DateControls date={date} setDate={setDate}/>
-      <Menu
+      <MenuBar
+        onInsightsButtonClick={() => setPage(Pages.INSIGHTS)}
         onChartButtonClick={() => setPage(Pages.CHART)}
         onFormButtonClick={() => setPage(Pages.FORM)}/>
       <div className="flex flex-col gap-4 p-4 my-24 w-full">
+        {page === Pages.INSIGHTS &&
+          <ErrorBoundary message="insight view">
+            <InsightsView/>
+          </ErrorBoundary>}
         {page === Pages.CHART &&
           <ErrorBoundary message="chart data">
             <TrackingChart date={date}/>
